@@ -26,21 +26,19 @@ echo "ciao"
 in tutti e due i casi il codice verrà eseguito automaticamente nel computer dell'utente.
 """)
 
-# Utilizzo una variabile globale per sincronizzare l'accesso al microfono
-microphone_lock = False
+conversation_open = False
 
-def new_interaction(process):
-  if process.is_alive():
-    process.terminate()
+def new_interaction(conversation_open):
+  user_prompt = listen_prompt()
 
-  process = multiprocessing.Process(target=interaction)
+  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open))
   process.start()
   return process
 
-def interaction():
-  user_prompt = listen_prompt()
-
+def interaction(user_prompt, conversation_open):
+  #TODO: caricare la cronologia della chat dal json
   if user_prompt:
+    print("conversation_open:", conversation_open)
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
 
     output = chat.send_message(user_prompt).strip()
@@ -49,24 +47,24 @@ def interaction():
     if output:
       if '$END' in output:
         # La conversazione è chiusa
-        conversation_open = False
+        conversation_open.clear()
         output = output.replace('$END', '')
       else:
         # La conversazione continua
-        conversation_open = True
+        conversation_open.set()
       
       speak(output)
   else:
     speak("Scusa, non ho capito.")
-    conversation_open = False
-
-  return conversation_open
+    conversation_open.clear()
+  # TODO: salvare la cronologia della chat in json
+  exit(0)
 
 if __name__ == "__main__":
-  process = multiprocessing.Process(target=interaction)  # Processo interazione
+  conversation_open = multiprocessing.Event()  # Default False
 
   # Chiude eventuali interazioni attive e ne apre una nuova quando viene invocata la wake word
-  wake_word_thread = multiprocessing.Process(target=async_wake_word_callback, args=(new_interaction, (process,)))
+  wake_word_thread = threading.Thread(target=async_wake_word_callback, args=(new_interaction, conversation_open))
   #wake_word_thread.daemon = False
   wake_word_thread.start()
 

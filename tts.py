@@ -28,7 +28,7 @@ def _text_to_audio(text):
   audioStream_b64 = r.json()['audioStream']
 
   mp3_bytes = base64.b64decode(audioStream_b64)
-  output_file_name = "media/output.mp3"
+  output_file_name = "sounds/output.mp3"
 
   with open(output_file_name, "wb") as output_file:
     output_file.write(mp3_bytes)

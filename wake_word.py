@@ -1,10 +1,7 @@
-import multiprocessing
+from processes import kill_process_and_children
 import pvporcupine
-import threading
 import pyaudio
 import struct
-import time
-import sys
 import os
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
@@ -32,7 +29,6 @@ def blocking_wake_word():
     input=True,
     frames_per_buffer=handle.frame_length)
   
-  os.system("clear")
   print('\x1b[0m')
   
   print("Aspetto la parola di attivazione...")
@@ -50,20 +46,20 @@ def blocking_wake_word():
     pa.terminate()        # Termina PyAudio
     handle.delete()       # Elimina l'handle di Porcupine
 
-def async_wake_word_callback(callback, args=()):
-  p = None
+def async_wake_word_callback(callback, conversation_open):
+  blocking_wake_word()
+  p = callback(conversation_open)
+
   while True:
+    # Crea nuove interazioni se conversation_open è True
+    while conversation_open.is_set():
+      p = callback(conversation_open)
+
     blocking_wake_word()
-    if p == None:
-      p = callback(*args)
-    else:
-      p = callback(p)
-    #time.sleep(20)
+    if p.is_alive():
+      kill_process_and_children(p.pid)
+      print("Processo interrotto")
 
-"""def async_wake_word_callback(callback, args=()):
-  def _wake_word_callback(callback, args):
-    blocking_wake_word()  # Aspetta la parola di attivazione
-    callback(* args)
+    print("Sto creando un nuovo processo...")
 
-  t = threading.Thread(target=_wake_word_callback, args=(callback, args))
-  t.start()"""
+    p = callback(conversation_open)

@@ -7,7 +7,7 @@ def listen_prompt(timeout=8):
   # Initialize the recognizer
   r = sr.Recognizer()
 
-  s = Sound("media/active.mp3")
+  s = Sound("sounds/active.mp3")
   s.async_play(delay=.3)
 
   with sr.Microphone() as source:

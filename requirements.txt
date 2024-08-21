@@ -4,3 +4,4 @@ pydub
 requests
 replicate
 speechrecognition
+playsound
