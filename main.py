@@ -1,11 +1,11 @@
-import replicate
-from tts import speak
-from sounds import async_sound
-from stt import listen_prompt
+from wake_word import async_wake_word_callback, blocking_wake_word
+from tts import speak, async_speak
 from filter import replace_tokens
 from ChatState import ChatState
-from time import sleep
-from wake_word import listen_for_wake_word
+from stt import listen_prompt
+from time import sleep, time
+import multiprocessing
+import threading
 
 chat = ChatState(system="""Sei un chatbot vocale in grado di avere conversazioni follow-up con l'utente, termina la conversazione appena possibile usando $END a meno che tu non debba chiedere qualcosa all'utente. Oltre alle normali risposte hai a disposizione dei tag che puoi inserire solo in caso di necessità nelle risposte per richiamare funzioni ed inserire informazioni nella frase:
 $TIME -> viene sostituito con l'orario attuale, per esempio "Sono le $TIME $END"
@@ -26,12 +26,18 @@ echo "ciao"
 in tutti e due i casi il codice verrà eseguito automaticamente nel computer dell'utente.
 """)
 
-conversation_open = False
+# Utilizzo una variabile globale per sincronizzare l'accesso al microfono
+microphone_lock = False
 
-while True:
-  if not conversation_open:
-    listen_for_wake_word()
-  
+def new_interaction(process):
+  if process.is_alive():
+    process.terminate()
+
+  process = multiprocessing.Process(target=interaction)
+  process.start()
+  return process
+
+def interaction():
   user_prompt = listen_prompt()
 
   if user_prompt:
@@ -48,7 +54,20 @@ while True:
       else:
         # La conversazione continua
         conversation_open = True
+      
       speak(output)
   else:
     speak("Scusa, non ho capito.")
     conversation_open = False
+
+  return conversation_open
+
+if __name__ == "__main__":
+  process = multiprocessing.Process(target=interaction)  # Processo interazione
+
+  # Chiude eventuali interazioni attive e ne apre una nuova quando viene invocata la wake word
+  wake_word_thread = multiprocessing.Process(target=async_wake_word_callback, args=(new_interaction, (process,)))
+  #wake_word_thread.daemon = False
+  wake_word_thread.start()
+
+  #while True: pass

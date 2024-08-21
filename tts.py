@@ -1,27 +1,26 @@
+from sound import Sound
+import multiprocessing
+import threading
 import requests
 import base64
-from sounds import play_sound
 import os
-
-s = requests.Session()
-
-json = {
-	"audioFormat": "mp3",
-	"paragraphChunks": [
-		""
-	],
-	"voiceParams": {
-		"engine": "azure",
-		"languageCode": "it-IT",
-		"name": "palmira"
-	}
-}
 
 endpoint = "https://audio.api.speechify.com/generateAudioFiles"
 
-def speak(text):
-  json['paragraphChunks'][0] = text
-  r = s.post(endpoint, json=json)
+def _text_to_audio(text):
+  json = {
+    "audioFormat": "mp3",
+    "paragraphChunks": [
+      text
+    ],
+    "voiceParams": {
+      "engine": "azure",
+      "languageCode": "it-IT",
+      "name": "palmira"
+    }
+  }
+
+  r = requests.post(endpoint, json=json)
 
   if "audioStream" not in r.json():
     return
@@ -33,5 +32,26 @@ def speak(text):
 
   with open(output_file_name, "wb") as output_file:
     output_file.write(mp3_bytes)
+  return output_file_name
 
-  play_sound(output_file_name, speed=1.1)
+def speak(text):
+  filename = _text_to_audio(text)
+
+  s = Sound(filename, speed=1.1)
+  s.play()
+
+def async_speak(text):
+  """
+  Crea un processo diverso per il TTS in modo che possa essere interrotto forzatamente 
+  dal processo padre invocando la wake-word
+  """
+  filename = 'media/output.mp3'
+  s = Sound(filename, speed=1.1)
+
+  def _async_speak(s, text):
+    filename = _text_to_audio(text)
+    s.async_play()
+
+  p = multiprocessing.Process(target=_async_speak, args=(s, text))
+  p.start()
+  return s

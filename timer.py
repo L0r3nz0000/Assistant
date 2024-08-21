@@ -1,4 +1,5 @@
-from sounds import async_sound
+from sound import Sound
 
 def set_timer(seconds):
-  async_sound("media/timer.mp3", delay=seconds)
+  s = Sound("media/timer.mp3")
+  s.async_play(delay=seconds)

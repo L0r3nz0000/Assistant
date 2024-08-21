@@ -76,7 +76,7 @@ def execute_and_remove_python_tags(text):
     print("\033[91m" + "Eseguendo lo script python..." + "\033[39m")
     execute(f'{python_interpreter} scripts/script-{i+1}.py')
   
-  return modified_text
+  return text#modified_text
 
 def execute_and_remove_code_blocks(text):
   # Estrai tutto il contenuto tra i delimitatori bash
@@ -95,7 +95,7 @@ def execute_and_remove_code_blocks(text):
     print("\033[91m" + "Eseguendo lo script bash..." + "\033[39m")
     execute(f'bash scripts/script-{i+1}.sh')
   
-  return modified_text
+  return text#modified_text
 
 def replace_tokens(text):
   text = execute_and_remove_python_tags(text)  # Esegue e rimuove gli script python

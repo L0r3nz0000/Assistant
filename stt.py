@@ -1,12 +1,15 @@
 import speech_recognition as sr
-from sounds import async_sound
+from sound import Sound
 from tts import speak
 
 def listen_prompt(timeout=8):
   text = ""
   # Initialize the recognizer
   r = sr.Recognizer()
-  async_sound("media/active.mp3", delay=.3)
+
+  s = Sound("media/active.mp3")
+  s.async_play(delay=.3)
+
   with sr.Microphone() as source:
     r.adjust_for_ambient_noise(source, duration=.3)
 
@@ -20,5 +23,6 @@ def listen_prompt(timeout=8):
       except Exception as e:
         print("Exception:", e)
     except sr.exceptions.WaitTimeoutError:
+      print("Exception: WaitTimeoutError")
       print("Scusa, non ho capito.")
   return text

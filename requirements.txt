@@ -1,0 +1,6 @@
+pvporcupine
+pyaudio
+pydub
+requests
+replicate
+speechrecognition
