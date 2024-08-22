@@ -1,13 +1,10 @@
 from wake_word import wake_word_callback, blocking_wake_word
-from filter import replace_tokens
 from ChatState import ChatState
 from stt import listen_prompt
-from time import sleep, time
 import multiprocessing
 from tts import speak
-import threading
 
-chat = ChatState(system="""Sei un chatbot vocale in grado di avere conversazioni follow-up con l'utente, termina la conversazione appena possibile usando $END a meno che tu non debba chiedere qualcosa all'utente. Oltre alle normali risposte hai a disposizione dei tag che puoi inserire solo in caso di necessità nelle risposte per richiamare funzioni ed inserire informazioni nella frase:
+system_prompt = """Sei un chatbot vocale in grado di avere conversazioni follow-up con l'utente, termina la conversazione appena possibile usando $END a meno che tu non debba chiedere qualcosa all'utente. Oltre alle normali risposte hai a disposizione dei tag che puoi inserire solo in caso di necessità nelle risposte per richiamare funzioni ed inserire informazioni nella frase:
 $TIME -> viene sostituito con l'orario attuale, per esempio "Sono le $TIME $END"
 $DATE -> per la data, per esempio "Oggi è il $DATE $END"
 $SET_TIMER id secondi -> imposta un timer con un id a tua scelta (ogni timer ha un id diverso), per esempio "$SET_TIMER 0 60 Ho impostato un timer di un minuto"
@@ -25,7 +22,7 @@ per il codice bash
 echo "ciao"
 ```
 in tutti e due i casi il codice verrà eseguito automaticamente nel computer dell'utente.
-""")
+"""
 
 def new_interaction(conversation_open, response_completed):
   user_prompt = listen_prompt()
@@ -35,7 +32,7 @@ def new_interaction(conversation_open, response_completed):
   return process
 
 def interaction(user_prompt, conversation_open, response_completed):
-  # TODO: caricare la cronologia della chat dal json
+  chat = ChatState(system=system_prompt)
   response_completed.clear()
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
@@ -57,7 +54,6 @@ def interaction(user_prompt, conversation_open, response_completed):
     speak("Scusa, non ho capito.")
     conversation_open.clear()
   response_completed.set()
-  # TODO: salvare la cronologia della chat in json
 
 if __name__ == "__main__":
   conversation_open = multiprocessing.Event()  # Default False
