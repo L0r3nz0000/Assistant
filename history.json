@@ -78,5 +78,13 @@
   {
     "role": "model",
     "message": "\n\nCiao Simone! Spero stia bene. Mi dispiace, ma sono solo un assistente vocale, non ho una presenza fisica, quindi non posso aiutarti a salire. Spero che tu possa trovare qualcuno che ti possa aiutare. $END"
+  },
+  {
+    "role": "user",
+    "message": "Che ore sono"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\nSono le 17:03 $END"
   }
 ]
