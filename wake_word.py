@@ -4,10 +4,6 @@ import pvporcupine
 import pyaudio
 import logging
 import struct
-<<<<<<< HEAD
-import os
-=======
->>>>>>> no_microfone_output
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
@@ -18,10 +14,6 @@ def get_next_audio_frame(): pass
 
 # Aspetta la parola di attivazione
 def blocking_wake_word(conversation_open, response_completed):
-<<<<<<< HEAD
-  print('\x1b[34m\x1b[1m')
-=======
->>>>>>> no_microfone_output
   handle = pvporcupine.create(
     access_key=access_key,
     keyword_paths=[keyword_path],
