@@ -12,7 +12,7 @@ model_path = "wake_word_models/porcupine_params_it.pv"
 def get_next_audio_frame(): pass
 
 # Aspetta la parola di attivazione
-def blocking_wake_word():
+def blocking_wake_word(conversation_open, response_completed):
   print('\x1b[34m\x1b[1m')
   handle = pvporcupine.create(
     access_key=access_key,
@@ -35,6 +35,8 @@ def blocking_wake_word():
 
   try:
     while True:
+      if response_completed.is_set() and conversation_open.is_set():
+        return False
       pcm = audio_stream.read(handle.frame_length)
       pcm = struct.unpack_from("h" * handle.frame_length, pcm)
       keyword_index = handle.process(pcm)
@@ -46,20 +48,19 @@ def blocking_wake_word():
     pa.terminate()        # Termina PyAudio
     handle.delete()       # Elimina l'handle di Porcupine
 
-def async_wake_word_callback(callback, conversation_open):
-  blocking_wake_word()
-  p = callback(conversation_open)
+
+
+def wake_word_callback(new_interaction, conversation_open, response_completed, args=()):
+  # Passando conversation_open come stop_flag, se l'assistente vorrà aprire una nuova
+  # interazione verrà interrotta l'attesa della wake word e aperto un nuovo processo
+  blocking_wake_word(conversation_open, response_completed)
+  p = new_interaction(*args)
 
   while True:
-    # Crea nuove interazioni se conversation_open è True
-    while conversation_open.is_set():
-      p = callback(conversation_open)
-
-    blocking_wake_word()
+    blocking_wake_word(conversation_open, response_completed)
     if p.is_alive():
       kill_process_and_children(p.pid)
       print("Processo interrotto")
 
     print("Sto creando un nuovo processo...")
-
-    p = callback(conversation_open)
+    p = new_interaction(*args)

@@ -1,4 +1,4 @@
-from wake_word import async_wake_word_callback, blocking_wake_word
+from wake_word import wake_word_callback, blocking_wake_word
 from tts import speak, async_speak
 from filter import replace_tokens
 from ChatState import ChatState
@@ -26,19 +26,17 @@ echo "ciao"
 in tutti e due i casi il codice verrà eseguito automaticamente nel computer dell'utente.
 """)
 
-conversation_open = False
-
-def new_interaction(conversation_open):
+def new_interaction(conversation_open, response_completed):
   user_prompt = listen_prompt()
 
-  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open))
+  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open, response_completed))
   process.start()
   return process
 
-def interaction(user_prompt, conversation_open):
-  #TODO: caricare la cronologia della chat dal json
+def interaction(user_prompt, conversation_open, response_completed):
+  # TODO: caricare la cronologia della chat dal json
+  response_completed.clear()
   if user_prompt:
-    print("conversation_open:", conversation_open)
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
 
     output = chat.send_message(user_prompt).strip()
@@ -57,15 +55,13 @@ def interaction(user_prompt, conversation_open):
   else:
     speak("Scusa, non ho capito.")
     conversation_open.clear()
+  response_completed.set()
   # TODO: salvare la cronologia della chat in json
-  exit(0)
 
 if __name__ == "__main__":
   conversation_open = multiprocessing.Event()  # Default False
-
-  # Chiude eventuali interazioni attive e ne apre una nuova quando viene invocata la wake word
-  wake_word_thread = threading.Thread(target=async_wake_word_callback, args=(new_interaction, conversation_open))
-  #wake_word_thread.daemon = False
-  wake_word_thread.start()
+  response_completed = multiprocessing.Event()
+  
+  wake_word_callback(new_interaction, conversation_open, response_completed, (conversation_open, response_completed))
 
   #while True: pass
