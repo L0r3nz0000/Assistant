@@ -1,3 +1,4 @@
+from redirect_output import suppress_stderr, restore_stderr
 import speech_recognition as sr
 from sound import Sound
 from tts import speak
@@ -9,6 +10,8 @@ def listen_prompt(timeout=8):
 
   s = Sound("sounds/active.mp3")
   s.delayed_play(delay=.3)
+
+  old_stderr = suppress_stderr()
 
   with sr.Microphone() as source:
     r.adjust_for_ambient_noise(source, duration=.3)
@@ -25,4 +28,6 @@ def listen_prompt(timeout=8):
     except sr.exceptions.WaitTimeoutError:
       print("Exception: WaitTimeoutError")
       print("Scusa, non ho capito.")
+
+  restore_stderr(old_stderr)  # Ripristina lo stderr
   return text

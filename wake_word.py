@@ -1,8 +1,13 @@
+from redirect_output import suppress_stderr, restore_stderr
 from processes import kill_process_and_children
 import pvporcupine
 import pyaudio
+import logging
 import struct
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> no_microfone_output
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
@@ -13,12 +18,17 @@ def get_next_audio_frame(): pass
 
 # Aspetta la parola di attivazione
 def blocking_wake_word(conversation_open, response_completed):
+<<<<<<< HEAD
   print('\x1b[34m\x1b[1m')
+=======
+>>>>>>> no_microfone_output
   handle = pvporcupine.create(
     access_key=access_key,
     keyword_paths=[keyword_path],
     model_path=model_path
   )
+
+  old_stderr = suppress_stderr()
 
   pa = pyaudio.PyAudio()
 
@@ -28,8 +38,6 @@ def blocking_wake_word(conversation_open, response_completed):
     format=pyaudio.paInt16,
     input=True,
     frames_per_buffer=handle.frame_length)
-  
-  print('\x1b[0m')
   
   print("Aspetto la parola di attivazione...")
 
@@ -44,9 +52,10 @@ def blocking_wake_word(conversation_open, response_completed):
         print("Attivo")
         return True
   finally:
-    audio_stream.close()  # Chiude lo stream audio
-    pa.terminate()        # Termina PyAudio
-    handle.delete()       # Elimina l'handle di Porcupine
+    audio_stream.close()        # Chiude lo stream audio
+    pa.terminate()              # Termina PyAudio
+    handle.delete()             # Elimina l'handle di Porcupine
+    restore_stderr(old_stderr)  # Ripristina lo stderr
 
 def wake_word_callback(new_interaction, conversation_open, response_completed, args=()):
   # Passando conversation_open come stop_flag, se l'assistente vorrà aprire una nuova
