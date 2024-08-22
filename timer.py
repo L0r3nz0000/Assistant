@@ -34,7 +34,7 @@ def _save(timers):
 # Avvia un timer asincrono e ritorna il pid
 def start_timer(id, seconds):
   if _search_timer(_load_timers(file_path), id) != -1:
-    print("Impossibile creare due timer con lo stesso id")
+    print(f"Impossibile creare due timer con lo stesso id: {id}")
     return -1
   s = Sound("sounds/timer.mp3")
   pid = s.delayed_play(delay=seconds)
