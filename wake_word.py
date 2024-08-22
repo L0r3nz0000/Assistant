@@ -2,6 +2,7 @@ from processes import kill_process_and_children
 import pvporcupine
 import pyaudio
 import struct
+import sys
 import os
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
@@ -14,6 +15,7 @@ def get_next_audio_frame(): pass
 # Aspetta la parola di attivazione
 def blocking_wake_word(conversation_open, response_completed):
   print('\x1b[34m\x1b[1m')
+
   handle = pvporcupine.create(
     access_key=access_key,
     keyword_paths=[keyword_path],

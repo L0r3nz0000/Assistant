@@ -4,7 +4,7 @@ from stt import listen_prompt
 import multiprocessing
 from tts import speak
 
-system_prompt = """Sei un chatbot vocale in grado di avere conversazioni follow-up con l'utente, termina la conversazione appena possibile usando $END a meno che tu non debba chiedere qualcosa all'utente. Oltre alle normali risposte hai a disposizione dei tag che puoi inserire solo in caso di necessità nelle risposte per richiamare funzioni ed inserire informazioni nella frase:
+system_prompt = """Sei un assistente vocale in grado di avere conversazioni follow-up con l'utente, termina la conversazione appena possibile usando $END a meno che tu non debba chiedere qualcosa all'utente. Oltre alle normali risposte hai a disposizione dei tag che puoi inserire solo in caso di necessità nelle risposte per richiamare funzioni ed inserire informazioni nella frase:
 $TIME -> viene sostituito con l'orario attuale, per esempio "Sono le $TIME $END"
 $DATE -> per la data, per esempio "Oggi è il $DATE $END"
 $SET_TIMER id secondi -> imposta un timer con un id a tua scelta (ogni timer ha un id diverso), per esempio "$SET_TIMER 0 60 Ho impostato un timer di un minuto"
