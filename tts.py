@@ -39,19 +39,3 @@ def speak(text):
 
   s = Sound(filename, speed=1.1)
   s.play()
-
-def async_speak(text):
-  """
-  Crea un processo diverso per il TTS in modo che possa essere interrotto forzatamente 
-  dal processo padre invocando la wake-word
-  """
-  filename = 'media/output.mp3'
-  s = Sound(filename, speed=1.1)
-
-  def _async_speak(s, text):
-    filename = _text_to_audio(text)
-    s.async_play()
-
-  p = multiprocessing.Process(target=_async_speak, args=(s, text))
-  p.start()
-  return s

@@ -1,16 +1,17 @@
 from wake_word import wake_word_callback, blocking_wake_word
-from tts import speak, async_speak
 from filter import replace_tokens
 from ChatState import ChatState
 from stt import listen_prompt
 from time import sleep, time
 import multiprocessing
+from tts import speak
 import threading
 
 chat = ChatState(system="""Sei un chatbot vocale in grado di avere conversazioni follow-up con l'utente, termina la conversazione appena possibile usando $END a meno che tu non debba chiedere qualcosa all'utente. Oltre alle normali risposte hai a disposizione dei tag che puoi inserire solo in caso di necessità nelle risposte per richiamare funzioni ed inserire informazioni nella frase:
 $TIME -> viene sostituito con l'orario attuale, per esempio "Sono le $TIME $END"
 $DATE -> per la data, per esempio "Oggi è il $DATE $END"
-$SET_TIMER secondi -> imposta un timer, per esempio "$SET_TIMER 60 Ho impostato un timer di un minuto"
+$SET_TIMER id secondi -> imposta un timer con un id a tua scelta (ogni timer ha un id diverso), per esempio "$SET_TIMER 0 60 Ho impostato un timer di un minuto"
+$STOP_TIMER id -> interrompe un timer, per esempio "$STOP_TIMER 0 Ho interrotto il timer da un minuto"
 $OPEN_URL url -> apre un link nel browser, per esempio Sto aprendo il sito di google $OPEN_URL https://www.google.com
 $NEW_EVENT titolo dd/mm/yyyy hh:mm -> crea un nuovo evento nel calendario, per esempio "Ho creato un evento domani $NEW_EVENT festa 18/08/2024 20:30"
 $END -> termina la conversazione, per esempio "output... $END"
@@ -63,5 +64,3 @@ if __name__ == "__main__":
   response_completed = multiprocessing.Event()
   
   wake_word_callback(new_interaction, conversation_open, response_completed, (conversation_open, response_completed))
-
-  #while True: pass

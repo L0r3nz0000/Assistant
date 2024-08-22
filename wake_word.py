@@ -48,8 +48,6 @@ def blocking_wake_word(conversation_open, response_completed):
     pa.terminate()        # Termina PyAudio
     handle.delete()       # Elimina l'handle di Porcupine
 
-
-
 def wake_word_callback(new_interaction, conversation_open, response_completed, args=()):
   # Passando conversation_open come stop_flag, se l'assistente vorrà aprire una nuova
   # interazione verrà interrotta l'attesa della wake word e aperto un nuovo processo

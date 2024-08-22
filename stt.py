@@ -8,7 +8,7 @@ def listen_prompt(timeout=8):
   r = sr.Recognizer()
 
   s = Sound("sounds/active.mp3")
-  s.async_play(delay=.3)
+  s.delayed_play(delay=.3)
 
   with sr.Microphone() as source:
     r.adjust_for_ambient_noise(source, duration=.3)

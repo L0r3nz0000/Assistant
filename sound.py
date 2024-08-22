@@ -1,4 +1,4 @@
-import threading
+import multiprocessing
 from time import sleep
 import subprocess
 import os
@@ -8,8 +8,8 @@ class Sound:
   def __init__(self, filename, speed=1.0):
     if os.path.exists(filename):
       self.filename = filename
+      self.delay_process = None
       self.speed = speed
-      self.process = None
     else:
       print(f"File {filename} non trovato")
   
@@ -23,14 +23,15 @@ class Sound:
 
   def _delayed_play(self, delay):
     sleep(delay)
-    self.async_play()
+    self.delayed_play(0)
 
-  def async_play(self, delay=0):
+  def delayed_play(self, delay):
     if delay > 0:
-      p = threading.Thread(target=self._delayed_play, args=(delay,))
-      p.start()
+      self.delay_process = multiprocessing.Process(target=self._delayed_play, args=(delay,))
+      self.delay_process.start()
+      return self.delay_process.pid
     else:
-      self.process = subprocess.Popen(["play", self.filename, "tempo", str(self.speed)],
+      subprocess.run(["play", self.filename, "tempo", str(self.speed)],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL)
   
@@ -40,9 +41,12 @@ class Sound:
       stderr=subprocess.STDOUT)
   
   def stop(self):
-    if self.process != None:
-      self.process.terminate()
-      return 0
-    else:
-      print("Processo già terminato")
-      return 1
+    ok = False
+
+    if self.delay_process != None:
+      if self.delay_process.is_alive():
+        self.delay_process.terminate()
+        ok = True
+    
+    print("Processo già terminato" if not ok else "")
+    return ok
