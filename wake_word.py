@@ -20,7 +20,7 @@ def get_next_audio_frame(): pass
 def blocking_wake_word(conversation_open, response_completed):
   handle = pvporcupine.create(
     access_key=access_key,
-    keyword_paths=[linux_keyword_path],
+    keyword_paths=[keyword_path],
     model_path=model_path
   )
 
