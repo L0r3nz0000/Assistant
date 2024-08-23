@@ -1,13 +1,17 @@
 from redirect_output import suppress_stderr, restore_stderr
 from processes import kill_process_and_children
+from raspberry_pi import is_raspberry_pi
 import pvporcupine
 import pyaudio
-import logging
 import struct
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
-keyword_path = "wake_word_models/jarvis_it_linux_v3_0_0.ppn"
+linux_keyword_path = "wake_word_models/jarvis_it_linux_v3_0_0.ppn"
+raspberry_keyword_path = "wake_word_models/Jarvis_it_raspberry-pi_v3_0_0.ppn"
+
+# Carica il modello adatto per la piattaforma
+keyword_path = linux_keyword_path if not is_raspberry_pi() else raspberry_keyword_path
 model_path = "wake_word_models/porcupine_params_it.pv"
 
 def get_next_audio_frame(): pass
@@ -16,7 +20,7 @@ def get_next_audio_frame(): pass
 def blocking_wake_word(conversation_open, response_completed):
   handle = pvporcupine.create(
     access_key=access_key,
-    keyword_paths=[keyword_path],
+    keyword_paths=[linux_keyword_path],
     model_path=model_path
   )
 
