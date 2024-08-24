@@ -1,18 +1,2 @@
 [
-  {
-    "role": "user",
-    "message": "Che ore sono"
-  },
-  {
-    "role": "model",
-    "message": "\n\nSono le $TIME $END"
-  },
-  {
-    "role": "user",
-    "message": "Che ore sono"
-  },
-  {
-    "role": "model",
-    "message": "\n\nSono le $TIME $END"
-  }
 ]
