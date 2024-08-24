@@ -1,18 +1,2 @@
 [
-  {
-    "role": "user",
-    "message": "Qual \u00e8 la frequenza di base di un Raspberry Pi"
-  },
-  {
-    "role": "model",
-    "message": "\n\nLa frequenza di base di un Raspberry Pi varia in base al modello specifico. Tuttavia, i modelli pi\u00f9 comuni hanno le seguenti frequenze di base:\n\n* Raspberry Pi 1 e 2: 700 MHz\n* Raspberry Pi 3: 1.2 GHz\n* Raspberry Pi 4: 1.5 GHz\n\nTieni presente che alcuni modelli possono avere opzioni di overclocking, che consentono di aumentare la frequenza di base fino a un certo punto. $END"
-  },
-  {
-    "role": "user",
-    "message": "come Overclock un Raspberry Pi 4"
-  },
-  {
-    "role": "model",
-    "message": "\n\nOverclocking un Raspberry Pi 4 pu\u00f2 essere fatto modificando il file di configurazione del sistema. Ecco i passaggi per farlo:\n\n1. Apri il terminale sul tuo Raspberry Pi e digita il comando `sudo raspi-config` per aprire l'interfaccia di configurazione del Raspberry Pi.\n2. Seleziona \"Performance\" e poi \"Overclocking\" con le frecce direzionali e premi Invio.\n3. Seleziona il livello di overclocking desiderato:\n\t* \"None\" (predefinito): nessun overclocking\n\t* \"Modest\": overclocking moderato (fino a 1.75 GHz)\n\t* \"Medium\": overclocking medio (fino a 1.85 GHz)\n\t* \"High\": overclocking alto (fino a 2.0 GHz)\n\t* \"Turbo\": overclocking turbo (fino a 2.15 GHz)\n4. Premi Invio per confermare la scelta.\n5. Riavvia il Raspberry Pi con il comando `sudo reboot`.\n\nNota: overclocking pu\u00f2 aumentare il consumo di energia e generare calore, quindi assicurati di avere un sistema di raffreddamento adeguato.\n\nOppure, puoi anche modificare manualmente il file di configurazione `config.txt` con un editor di testo. Per farlo, apri il terminale e digita:\n```\nsudo nano /boot/config.txt\n```\nAggiungi la seguente riga alla fine del file:\n```\nover_voltage=6\narm_freq=2000\n```\nSostituisci `2000` con la frequenza di clock desiderata in MHz.\n\nPremi `Ctrl+X`, poi `Y` e infine `Invio` per salvare e chiudere l'editor.\n\nRiavvia il Raspberry Pi con il comando `sudo reboot`.\n\n$END"
-  }
 ]

@@ -5,6 +5,7 @@ from tts import speak
 import webbrowser
 import subprocess
 import threading
+import json
 import os
 import re
 
@@ -47,11 +48,13 @@ tokens = {
   '$SET_TIMER': '',
   '$STOP_TIMER': '',
   '$OPEN_URL': '',
+  '$SET_SPEED': '',
   '[nome utente]': username
 }
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
 pattern_stop_timer = r'\$STOP_TIMER (\d+)'                                            #   $STOP_TIMER id
+pattern_speed = r'\$SET_SPEED (\d+)'                                                  #   $SET_SPEED speed
 pattern_url = r'\$OPEN_URL (\S+)'                                                     #   $OPEN_URL url
 pattern_python = r'```python(.*?)```'                                                 #   ```python    code    ```
 pattern_bash = r'```bash(.*?)```'                                                     #   ```bash    code    ```
@@ -128,7 +131,7 @@ def replace_tokens(text):
           speak("Non sono riuscito a creare l'evento")
 
 
-      if token == '$SET_TIMER':
+      elif token == '$SET_TIMER':
         matches = re.findall(pattern_timer, text)
         if matches:
           for match in matches:
@@ -155,7 +158,7 @@ def replace_tokens(text):
 
             text = re.sub(pattern_timer, '', text)
       
-      if token == '$STOP_TIMER':
+      elif token == '$STOP_TIMER':
         matches = re.findall(pattern_stop_timer, text)
         if matches:
           for match in matches:
@@ -174,6 +177,30 @@ def replace_tokens(text):
               speak("Non sono riuscito ad interrompere il timer")
 
             text = re.sub(pattern_stop_timer, '', text)
+      
+      elif token == '$SET_SPEED':
+        matches = re.findall(pattern_speed, text)
+        if matches:
+          for match in matches:
+            try:
+              speed = float(match[0])
+
+              # Apre il file
+              with open("settings.json", "rw") as file:
+                # Carica le impostazioni dal file
+                settings = json.load(file)
+
+                # Modifica la velocità di output
+                settings['output_speed'] = speed
+
+                # Salva le modifiche apportate
+                json.dump(settings, file, indent=2)
+              
+            except Exception as e:
+              speak("Non sono riuscito a modificare la velocità")
+              print("Exception:", e)
+
+            text = re.sub(pattern_speed, '', text)
 
       elif token == '$OPEN_URL':
         matches = re.findall(pattern_url, text)

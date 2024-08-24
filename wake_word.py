@@ -1,7 +1,7 @@
 from redirect_output import suppress_stderr, restore_stderr
 from processes import kill_process_and_children
-from ChatState import ChatState
 from raspberry_pi import is_raspberry_pi
+from ChatState import ChatState
 import pvporcupine
 import pyaudio
 import struct
