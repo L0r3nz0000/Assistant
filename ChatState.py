@@ -3,7 +3,7 @@ import replicate
 import json
 import os
 
-class ChatState():
+class ChatState:
   __BEGIN_TEXT__ = "<|begin_of_text|>"
   __START_TURN_SYSTEM__ = "<|start_header_id|>system<|end_header_id|>\n\n"
   __START_TURN_USER__ = "<|start_header_id|>user<|end_header_id|>\n\n"
@@ -13,23 +13,29 @@ class ChatState():
   MODEL_NAME = "meta/meta-llama-3-70b-instruct"
   JSON_FILE = "history.json"
 
-  def __init__(self, system=""):
+  def __init__(self, system="", history_json=[]):
     self.system_prompt = system
     self.history = []
-    self.history_json = []
+    self.history_json = history_json
 
-    self._load_history_from_json(self.JSON_FILE)
+    if len(history_json) == 0:
+      self._load_history_from_file(self.JSON_FILE)
+    else:
+      self._load_json(self.history_json)
   
-  def _load_history_from_json(self, file_path):
+  def _load_json(self, history_json):
+    for interaction in self.history_json:
+      if interaction["role"] == "user":
+        self.history.append(self.__START_TURN_USER__ + interaction["message"] + self.__END_TURN__)
+      elif interaction["role"] == "model":
+        self.history.append(self.__START_TURN_MODEL__ + interaction["message"] + self.__END_TURN__)
+  
+  def _load_history_from_file(self, file_path=""):
     if os.path.exists(file_path):
       with open(file_path, 'r') as file:
         self.history_json = json.load(file)
       
-      for interaction in self.history_json:
-        if interaction["role"] == "user":
-          self.history.append(self.__START_TURN_USER__ + interaction["message"] + self.__END_TURN__)
-        elif interaction["role"] == "model":
-          self.history.append(self.__START_TURN_MODEL__ + interaction["message"] + self.__END_TURN__)
+      self._load_json(self.history_json)
 
   def _save_json_history(self, file_path):
     with open(file_path, 'w') as file:

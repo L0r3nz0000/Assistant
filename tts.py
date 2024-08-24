@@ -1,6 +1,5 @@
+from markdown import remove_markdown
 from sound import Sound
-import multiprocessing
-import threading
 import requests
 import base64
 import os
@@ -8,6 +7,7 @@ import os
 endpoint = "https://audio.api.speechify.com/generateAudioFiles"
 
 def _text_to_audio(text):
+  text = remove_markdown(text)
   json = {
     "audioFormat": "mp3",
     "paragraphChunks": [

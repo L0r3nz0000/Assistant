@@ -1,5 +1,6 @@
 from redirect_output import suppress_stderr, restore_stderr
 from processes import kill_process_and_children
+from ChatState import ChatState
 import pvporcupine
 import pyaudio
 import logging
@@ -50,8 +51,6 @@ def blocking_wake_word(conversation_open, response_completed):
     restore_stderr(old_stderr)  # Ripristina lo stderr
 
 def wake_word_callback(new_interaction, conversation_open, response_completed, args=()):
-  # Passando conversation_open come stop_flag, se l'assistente vorrà aprire una nuova
-  # interazione verrà interrotta l'attesa della wake word e aperto un nuovo processo
   blocking_wake_word(conversation_open, response_completed)
   p = new_interaction(*args)
 
