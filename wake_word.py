@@ -5,6 +5,8 @@ from ChatState import ChatState
 import pvporcupine
 import pyaudio
 import struct
+import signal
+import os
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
@@ -61,7 +63,8 @@ def wake_word_callback(new_interaction, conversation_open, response_completed, a
   while True:
     blocking_wake_word(conversation_open, response_completed)
     if p.is_alive():
-      kill_process_and_children(p.pid)
+      #kill_process_and_children(p.pid)
+      os.kill(p.pid, signal.SIGTERM)
       print("Processo interrotto")
 
     print("Sto creando un nuovo processo...")

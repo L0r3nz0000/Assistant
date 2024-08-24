@@ -1,8 +1,8 @@
-import multiprocessing
+from pydub import AudioSegment
 from time import sleep
+import multiprocessing
 import subprocess
 import os
-from pydub import AudioSegment
 
 class Sound:
   def __init__(self, filename, speed=1.0):
@@ -20,7 +20,7 @@ class Sound:
     # Calcola la durata in secondi
     duration_s = len(audio) / 1000.0
     return duration_s
-
+  
   def _delayed_play(self, delay):
     sleep(delay)
     self.delayed_play(0)

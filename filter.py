@@ -1,4 +1,5 @@
-from timer import start_timer, save_timer, stop_timer, _get_timer_pid
+from timer import start_timer, save_timer, stop_timer, _get_timer_pid, get_remaining
+from readable_time import convert_seconds_to_readable_time
 from datetime import datetime
 from events import new_event
 from tts import speak
@@ -47,6 +48,7 @@ tokens = {
   '$DATE': date,
   '$SET_TIMER': '',
   '$STOP_TIMER': '',
+  '$GET_TIMER_REMAINING': '',
   '$OPEN_URL': '',
   '$SET_SPEED': '',
   '[nome utente]': username
@@ -54,10 +56,11 @@ tokens = {
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
 pattern_stop_timer = r'\$STOP_TIMER (\d+)'                                            #   $STOP_TIMER id
+pattern_remaining = r'\$GET_TIMER_REMAINING (\d+)'                                    #   $GET_TIMER_REMAINING id
 pattern_speed = r'\$SET_SPEED (\d+(\.\d+)?)'                                          #   $SET_SPEED speed
 pattern_url = r'\$OPEN_URL (\S+)'                                                     #   $OPEN_URL url
 pattern_python = r'```python(.*?)```'                                                 #   ```python    code    ```
-pattern_bash = r'```bash(.*?)```'                                                     #   ```bash    code    ```
+pattern_bash = r'```bash(.*?)```'                                                     #   ```bash      code    ```
 pattern_event = r'\$NEW_EVENT\s+(\S+)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{1,2})'  #   $NEW_EVENT titolo dd/mm/yyyy hh:mm
 
 def execute(command):
@@ -139,24 +142,31 @@ def replace_tokens(text):
               id = int(match[0])
               seconds = int(match[1])
 
-              pid = start_timer(id, seconds)  # Imposta un timer
-
-              # Il timer è stato creato con successo
-              if pid != -1:
-                print(f"Nuovo timer impostato id:{id} pid:{pid}")
-
-                timer = {
-                  "id": id,
-                  "pid": pid,
-                  "seconds": seconds
-                }
-
-                save_timer(timer)
+              if not start_timer(id, seconds):  # Imposta un timer
+                print(f"Impossibile creare due timer con lo stesso id: {id}")
+                speak("Non sono riuscito ad impostare il timer")
 
             except ValueError:
               speak("Non sono riuscito ad impostare il timer")
 
             text = re.sub(pattern_timer, '', text)
+      
+      elif token == '$GET_TIMER_REMAINING':
+        matches = re.findall(pattern_remaining, text)
+        if matches:
+          for match in matches:
+            try:
+              id = int(match[0])
+
+              remaining = get_remaining(id)
+              readable_time = convert_seconds_to_readable_time(remaining)
+
+            except Exception as e:
+              speak("Non sono riuscito ad ottenere informazioni sul timer")
+              print("Exception:", e)
+
+            if remaining != -1:
+              text = re.sub(pattern_remaining, readable_time, text)
       
       elif token == '$STOP_TIMER':
         matches = re.findall(pattern_stop_timer, text)
