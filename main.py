@@ -4,15 +4,17 @@ from stt import listen_prompt
 import multiprocessing
 from tts import speak
 
-def new_interaction(chat, conversation_open, response_completed):
+def new_interaction(conversation_open, response_completed):
   user_prompt = listen_prompt()
 
-  process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
+  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open, response_completed))
   process.start()
   return process
 
-def interaction(chat, user_prompt, conversation_open, response_completed):
+def interaction(user_prompt, conversation_open, response_completed):
   response_completed.clear()
+
+  chat = ChatState(system=system_prompt)
 
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
@@ -42,6 +44,4 @@ if __name__ == "__main__":
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
   
-  chat = ChatState(system=system_prompt)
-  
-  wake_word_callback(new_interaction, conversation_open, response_completed, (chat, conversation_open, response_completed))
+  wake_word_callback(new_interaction, conversation_open, response_completed, (conversation_open, response_completed))

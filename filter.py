@@ -54,7 +54,7 @@ tokens = {
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
 pattern_stop_timer = r'\$STOP_TIMER (\d+)'                                            #   $STOP_TIMER id
-pattern_speed = r'\$SET_SPEED (\d+)'                                                  #   $SET_SPEED speed
+pattern_speed = r'\$SET_SPEED (\d+(\.\d+)?)'                                          #   $SET_SPEED speed
 pattern_url = r'\$OPEN_URL (\S+)'                                                     #   $OPEN_URL url
 pattern_python = r'```python(.*?)```'                                                 #   ```python    code    ```
 pattern_bash = r'```bash(.*?)```'                                                     #   ```bash    code    ```
@@ -185,14 +185,17 @@ def replace_tokens(text):
             try:
               speed = float(match[0])
 
+              print("VELOCITÀ IMPOSTATA A:", speed)
+
               # Apre il file
-              with open("settings.json", "rw") as file:
+              with open("settings.json", "r") as file:
                 # Carica le impostazioni dal file
                 settings = json.load(file)
 
                 # Modifica la velocità di output
                 settings['output_speed'] = speed
 
+              with open("settings.json", "w") as file:
                 # Salva le modifiche apportate
                 json.dump(settings, file, indent=2)
               

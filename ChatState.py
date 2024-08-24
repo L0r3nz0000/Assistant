@@ -4,38 +4,52 @@ import json
 import os
 
 class ChatState:
-  __BEGIN_TEXT__ = "<|begin_of_text|>"
-  __START_TURN_SYSTEM__ = "<|start_header_id|>system<|end_header_id|>\n\n"
-  __START_TURN_USER__ = "<|start_header_id|>user<|end_header_id|>\n\n"
-  __START_TURN_MODEL__ = "<|start_header_id|>assistant<|end_header_id|>\n\n"
-  __END_TURN__ = "<|eot_id|>\n"
+  __BEGIN_TEXT__ =          "<|begin_of_text|>"
+  __START_TURN_SYSTEM__ =   "<|start_header_id|>system<|end_header_id|>\n\n"
+  __START_TURN_USER__  =    "<|start_header_id|>user<|end_header_id|>\n\n"
+  __START_TURN_MODEL__ =    "<|start_header_id|>assistant<|end_header_id|>\n\n"
+  __END_TURN__ =            "<|eot_id|>\n"
 
-  MODEL_NAME = "meta/meta-llama-3-70b-instruct"
-  JSON_FILE = "history.json"
+  llama3_1_405b = "meta/meta-llama-3.1-405b-instruct"
+  llama3_70b =    "meta/meta-llama-3-70b-instruct"
+
+  MODEL_NAME = llama3_70b
+  HISTORY_FILE = "history.json"
+  SETTINGS_FILE = "settings.json"
 
   def __init__(self, system="", history_json=[]):
     self.system_prompt = system
     self.history = []
+    self.settings = {}
     self.history_json = history_json
 
+    self._load_settings_from_file(self.SETTINGS_FILE)
+
     if len(history_json) == 0:
-      self._load_history_from_file(self.JSON_FILE)
+      print("Sto caricando la cronologia della chat dal file history.json")
+      self._load_history_from_file(self.HISTORY_FILE)
     else:
-      self._load_json(self.history_json)
+      print("Sto caricando una cronologia custom")
+      self._load_history_from_json()
   
-  def _load_json(self, history_json):
+  def _load_history_from_json(self):
     for interaction in self.history_json:
       if interaction["role"] == "user":
         self.history.append(self.__START_TURN_USER__ + interaction["message"] + self.__END_TURN__)
       elif interaction["role"] == "model":
         self.history.append(self.__START_TURN_MODEL__ + interaction["message"] + self.__END_TURN__)
+
+  def _load_settings_from_file(self, file_path):
+    if os.path.exists(file_path):
+      with open(file_path, 'r') as file:
+        self.settings = json.load(file)
   
-  def _load_history_from_file(self, file_path=""):
+  def _load_history_from_file(self, file_path):
     if os.path.exists(file_path):
       with open(file_path, 'r') as file:
         self.history_json = json.load(file)
       
-      self._load_json(self.history_json)
+      self._load_history_from_json()
 
   def _save_json_history(self, file_path):
     with open(file_path, 'w') as file:
@@ -83,9 +97,11 @@ class ChatState:
     prompt = self.get_full_prompt()
 
     input = {
-      "prompt": prompt,
-      "max_tokens": 1024,
-      "min_tokens": 8
+      "prompt":         prompt,
+      "max_tokens":     self.settings['max_tokens'],
+      "min_tokens":     self.settings['min_tokens'],
+      "temperature":    self.settings['temperature'],
+      "length_penalty": self.settings['length_penalty']
     }
 
     response = ""
@@ -97,9 +113,11 @@ class ChatState:
     except replicate.exceptions.ReplicateError as e:
       print(e)
       exit(1)
-
-    response = replace_tokens(response)
     
     self.add_to_history_as_model(response)
-    self._save_json_history(self.JSON_FILE)
-    return response
+
+    # Salva la risposta senza sostituire i token
+    self._save_json_history(self.HISTORY_FILE)
+
+    # Ritorna la risposta dopo aver sostituito i token
+    return replace_tokens(response)

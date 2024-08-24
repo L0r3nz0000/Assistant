@@ -2,6 +2,7 @@ from markdown import remove_markdown
 from sound import Sound
 import requests
 import base64
+import json
 import os
 
 endpoint = "https://audio.api.speechify.com/generateAudioFiles"
@@ -37,5 +38,8 @@ def _text_to_audio(text):
 def speak(text):
   filename = _text_to_audio(text)
 
-  s = Sound(filename, speed=1.1)
+  with open("settings.json", "r") as file:
+    settings = json.load(file)
+
+  s = Sound(filename, speed=settings['output_speed'])
   s.play()
