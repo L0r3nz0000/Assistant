@@ -1,18 +1,18 @@
 [
   {
     "role": "user",
-    "message": "Imposta un timer di 30 secondi"
+    "message": "Che ore sono"
   },
   {
     "role": "model",
-    "message": "\n\n$SET_TIMER 1 30 Ho impostato un timer di 30 secondi $END"
+    "message": "\n\nSono le $TIME $END"
   },
   {
     "role": "user",
-    "message": "Elimina il timer"
+    "message": "Che ore sono"
   },
   {
     "role": "model",
-    "message": "\n\n$STOP_TIMER 1 Ho eliminato il timer $END"
+    "message": "\n\nSono le $TIME $END"
   }
 ]

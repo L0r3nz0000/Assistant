@@ -1,5 +1,6 @@
 {
   "output_speed": 1.1,
+  "volume_decrease": 30,
   "min_tokens": -1,
   "max_tokens": 1024,
   "temperature": 0.75,

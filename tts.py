@@ -1,4 +1,5 @@
 from markdown import remove_markdown
+import volume_controller
 from sound import Sound
 import requests
 import base64
@@ -41,5 +42,16 @@ def speak(text):
   with open("settings.json", "r") as file:
     settings = json.load(file)
 
+  # Ottiene la lista delle app che stanno riproducendo audio
+  active_sinks = volume_controller.get_playing_audio_apps()
+
+  # Abbassa il volume di tutte le app attive
+  for sink_id in active_sinks:
+    volume_controller.set_volume(sink_id, settings['volume_decrease'])
+
   s = Sound(filename, speed=settings['output_speed'])
   s.play()
+
+  # Riporta il volume delle app attive al valore iniziale
+  for sink_id in active_sinks:
+    volume_controller.set_volume(sink_id, 100)
