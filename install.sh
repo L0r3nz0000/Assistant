@@ -33,3 +33,5 @@ WantedBy=multi-user.target
 " | sudo tee /etc/systemd/system/Assistant.service > /dev/null
 
 sudo systemctl daemon-reload
+
+chmod +x upgrade.sh
