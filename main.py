@@ -11,13 +11,15 @@ import os
 def new_interaction(conversation_open, response_completed, update_available):
   chat = ChatState(system=system_prompt)
   user_prompt = ""
-  if not update_available.is_set():
-    user_prompt = listen_prompt()
-  else:
-    # Se ci sono aggiornamenti disponibili chiede all'utente se vuole farli
-    if update_available.is_set():
-      update_available.clear()
-      user_prompt = ask_for_updates(chat)
+  
+  if update_available.is_set():
+    update_available.clear()
+    question = "Ciao, è disponibile un aggiornamento, vuoi farlo ora?"
+    speak(question)
+    
+    chat.add_to_history_as_model(question)
+    
+  user_prompt = listen_prompt()  
 
   process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed, update_available))
   process.start()
@@ -58,8 +60,6 @@ if __name__ == "__main__":
 
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
-  
-  print("Aggiornamenti disponibili" if update_available.is_set() else "Aggiornamenti non disponibili")
   
   blocking_wake_word(conversation_open, response_completed, update_available)
   p = new_interaction(conversation_open, response_completed, update_available)

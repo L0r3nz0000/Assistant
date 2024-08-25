@@ -2,11 +2,8 @@ from redirect_output import suppress_stderr, restore_stderr
 from raspberry_pi import is_raspberry_pi
 from updates import fetch_updates
 import pvporcupine
-import threading
 import pyaudio
 import struct
-import signal
-import os
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
