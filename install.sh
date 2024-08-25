@@ -24,7 +24,7 @@ Description=Assistente vocale
 After=network.target
 
 [Service]
-ExecStart=$(pwd)/start.sh
+ExecStart=$(pwd)/.venv/bin/python3 $(pwd)/main.py
 WorkingDirectory=$(pwd)
 User=$(whoami)
 Restart=always
