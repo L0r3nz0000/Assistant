@@ -115,7 +115,7 @@ def replace_tokens(text):
         if local == remote:
           speak("Non ho trovato aggiormamenti")
         else:
-          subprocess.Popen(["./upgrade.sh"])
+          subprocess.Popen(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
           speak("Sto scaricando gli aggiornamenti")
           
         text = text.replace(token, tokens[token])
