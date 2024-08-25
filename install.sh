@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt update
-sudo apt install python3 python3-pip portaudio19-dev pulseaudio sox flac -y
+sudo apt install python3 python3-pip portaudio19-dev pulseaudio sox libsox-fmt-mp3 flac -y
 
 if [ ! -d ".venv" ]; then
   echo "Sto creando l'ambiente virtuale"
