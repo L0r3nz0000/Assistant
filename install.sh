@@ -9,7 +9,7 @@ pip install -r requirements.txt
 
 cd /etc/systemd/system/
 
-sudo echo "[Unit]
+echo "[Unit]
 Description=Assistente vocale
 After=network.target
 
@@ -22,6 +22,6 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-" > Assistant.service
+" | sudo tee /etc/systemd/system/Assistant.service > /dev/null
 
-systemctl daemon-reload
+sudo systemctl daemon-reload
