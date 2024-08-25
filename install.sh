@@ -24,7 +24,7 @@ After=network.target
 ExecStart=$(pwd)/.venv/bin/python3 $(pwd)/main.py
 Environment=\"REPLICATE_API_TOKEN=$API_TOKEN\"
 WorkingDirectory=$(pwd)
-User=$(whoami)
+User=root
 Restart=always
 RestartSec=5
 

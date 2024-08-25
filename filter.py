@@ -19,7 +19,8 @@ tokens = {
   '$GET_TIMER_REMAINING': '',
   '$OPEN_URL': '',
   '$SET_SPEED': '',
-  '$REMOVE_HISTORY': ''
+  '$REMOVE_HISTORY': '',
+  '$CHECK_UPDATES': ''
 }
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
@@ -105,7 +106,20 @@ def replace_tokens(text):
         with open("history.json", "w") as file:
           file.write("[]")
         text = text.replace(token, tokens[token])
+      
+      elif token == '$CHECK_UPDATES':
+        os.system("bash upgrade.sh")
+        local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout
+        remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout
 
+        if local == remote:
+          speak("Non ho trovato aggiormamenti")
+        else:
+          subprocess.Popen(["./upgrade.sh"])
+          speak("Sto scaricando gli aggiornamenti")
+          
+        text = text.replace(token, tokens[token])
+        
       elif token == '$SET_TIMER':
         matches = re.findall(pattern_timer, text)
         if matches:
