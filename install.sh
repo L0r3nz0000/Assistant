@@ -13,10 +13,9 @@ echo "Attivando l'ambiente virtuale"
 source .venv/bin/activate
 pip install -r requirements.txt
 
-echo "Inserisci il token api di replicate: "
-read API_TOKEN
+read -s -p "Inserisci il token api di replicate: " API_TOKEN
 
-echo "[Unit]
+echo '[Unit]
 Description=Assistente vocale
 After=network.target
 
@@ -30,6 +29,6 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-" | sudo tee /etc/systemd/system/Assistant.service > /dev/null
+' | sudo tee /etc/systemd/system/Assistant.service > /dev/null
 
 sudo systemctl daemon-reload
