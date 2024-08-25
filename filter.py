@@ -10,9 +10,6 @@ import json
 import os
 import re
 
-# Ottieni la data e l'ora corrente
-now = datetime.now()
-
 python_interpreter = "python3"
 
 tokens = {
