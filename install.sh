@@ -22,4 +22,6 @@ RestartSec=5
 WantedBy=multi-user.target
 " | sudo tee /etc/systemd/system/Assistant.service > /dev/null
 
+sudo chmod +x start.sh
+
 sudo systemctl daemon-reload
