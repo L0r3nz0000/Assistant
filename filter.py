@@ -1,6 +1,5 @@
-from timer import start_timer, save_timer, stop_timer, _get_timer_pid, get_remaining
 from readable_time import convert_seconds_to_readable_time, get_readable_time, get_readable_date
-from datetime import datetime
+from timer import start_timer, save_timer, stop_timer, _get_timer_pid, get_remaining
 from events import new_event
 from tts import speak
 import webbrowser
