@@ -6,3 +6,5 @@ replicate
 speechrecognition
 playsound
 psutil
+markdown2
+beautifulsoup4
