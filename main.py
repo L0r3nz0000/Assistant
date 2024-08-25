@@ -8,6 +8,8 @@ import threading
 import signal
 import os
 
+chat = None
+
 def new_interaction(conversation_open, response_completed, update_available):
   chat = ChatState(system=system_prompt)
   user_prompt = ""
