@@ -115,12 +115,11 @@ def replace_tokens(text):
         print("Local hash:  ", local)
         print("Remote hash: ", remote)
         
-
         if local == remote:
           speak("Non ho trovato aggiormamenti")
         else:
-          subprocess.run(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
           speak("Sto scaricando gli aggiornamenti")
+          subprocess.run(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
           
         text = text.replace(token, '')
         
