@@ -9,22 +9,22 @@ import signal
 import os
 
 def new_interaction(conversation_open, response_completed, update_available):
+  chat = ChatState(system=system_prompt)
   user_prompt = ""
   if not update_available.is_set():
     user_prompt = listen_prompt()
+  else:
+    # Se ci sono aggiornamenti disponibili chiede all'utente se vuole farli
+    if update_available.is_set():
+      update_available.clear()
+      user_prompt = ask_for_updates(chat)
 
-  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open, response_completed, update_available))
+  process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed, update_available))
   process.start()
   return process
 
-def interaction(user_prompt, conversation_open, response_completed, update_available):
+def interaction(chat, user_prompt, conversation_open, response_completed, update_available):
   response_completed.clear()
-  chat = ChatState(system=system_prompt)
-  
-  # Se ci sono aggiornamenti disponibili chiede all'utente se vuole farli
-  if update_available.is_set():
-    update_available.clear()
-    user_prompt = ask_for_updates(chat)
 
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)

@@ -118,7 +118,8 @@ def replace_tokens(text):
           speak("Non ho trovato aggiormamenti")
         else:
           speak("Sto scaricando gli aggiornamenti")
-          subprocess.Popen(["chmod", "+x", "update.sh", "&&", "./update.sh"])
+          subprocess.run(["chmod", "+x", "update.sh"])
+          subprocess.Popen(["./update.sh"])
           
         text = text.replace(token, '')
         

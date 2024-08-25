@@ -14,5 +14,17 @@
   {
     "role": "model",
     "message": "\n\n$UPDATE Sto facendo gli aggiornamenti $END"
+  },
+  {
+    "role": "model",
+    "message": "Ciao, \u00e8 disponibile un aggiornamento, vuoi farlo ora?"
+  },
+  {
+    "role": "user",
+    "message": "s\u00ec"
+  },
+  {
+    "role": "model",
+    "message": "\n\n$UPDATE Sto facendo gli aggiornamenti $END"
   }
 ]
