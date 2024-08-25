@@ -23,6 +23,7 @@ def interaction(user_prompt, conversation_open, response_completed, update_avail
   
   # Se ci sono aggiornamenti disponibili chiede all'utente se vuole farli
   if update_available.is_set():
+    update_available.clear()
     user_prompt = ask_for_updates(chat)
 
   if user_prompt:
