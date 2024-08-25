@@ -1,5 +1,5 @@
 from timer import start_timer, save_timer, stop_timer, _get_timer_pid, get_remaining
-from readable_time import convert_seconds_to_readable_time
+from readable_time import convert_seconds_to_readable_time, get_readable_time, get_readable_date
 from datetime import datetime
 from events import new_event
 from tts import speak
@@ -13,45 +13,17 @@ import re
 # Ottieni la data e l'ora corrente
 now = datetime.now()
 
-username = "lorenzo"
 python_interpreter = "python3"
 
-# Dizionari per i mesi e gli anni
-months = {
-  1: "gennaio", 2: "febbraio", 3: "marzo", 4: "aprile",
-  5: "maggio", 6: "giugno", 7: "luglio", 8: "agosto",
-  9: "settembre", 10: "ottobre", 11: "novembre", 12: "dicembre"
-}
-
-years = {
-  2020: "duemilaventi", 2021: "duemilaventuno", 2022: "duemilaventidue",
-  2023: "duemilaventitré", 2024: "duemilaventiquattro", 2025: "duemilaventicinque",
-  2026: "duemilaventisei"
-}
-
-# Ottieni la data corrente
-now = datetime.now()
-
-# Estrai giorno, mese, anno
-giorno = now.day
-month = months[now.month]
-year = years[now.year]
-
-# Crea la data in formato parole
-date = f"{giorno} {month} {year}"
-
-# Formatta l'ora come hh:mm
-formatted_time = now.strftime("%H:%M")
-
 tokens = {
-  '$TIME': formatted_time,
-  '$DATE': date,
+  '$TIME': get_readable_time(),
+  '$DATE': get_readable_date(),
   '$SET_TIMER': '',
   '$STOP_TIMER': '',
   '$GET_TIMER_REMAINING': '',
   '$OPEN_URL': '',
   '$SET_SPEED': '',
-  '[nome utente]': username
+  '$REMOVE_HISTORY': ''
 }
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
@@ -132,7 +104,10 @@ def replace_tokens(text):
             text = re.sub(pattern_event, '', text)
         else:
           speak("Non sono riuscito a creare l'evento")
-
+      
+      elif token == '$REMOVE_HISTORY':
+        with open("history.json", "w") as file:
+          file.write("[]")
 
       elif token == '$SET_TIMER':
         matches = re.findall(pattern_timer, text)

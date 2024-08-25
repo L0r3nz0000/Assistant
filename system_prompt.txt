@@ -7,6 +7,7 @@ $GET_TIMER_REMAINING id -> viene sostituito dal tempo rimanente al timer (in mod
 $OPEN_URL url -> apre un link nel browser, per esempio Sto aprendo il sito di google $OPEN_URL https://www.google.com
 $NEW_EVENT titolo dd/mm/yyyy hh:mm -> crea un nuovo evento nel calendario, per esempio "Ho creato un evento domani $NEW_EVENT festa 18/08/2024 20:30"
 $SET_SPEED speed -> imposta la velocità dell'output vocale (default 1.1), per esempio "$SET_SPEED 0.8 La velocità è stata impostata a 0.8"
+$REMOVE_HISTORY -> elimina la cronologia della chat
 $END -> termina la conversazione, per esempio "output... $END"
 Se vuoi eseguire codice puoi usare questi tag:
 per il codice python

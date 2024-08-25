@@ -1,3 +1,5 @@
+import datetime
+
 def convert_seconds_to_readable_time(seconds):
   # Calcola il numero di ore, minuti e secondi
   hours = seconds // 3600
@@ -21,3 +23,33 @@ def convert_seconds_to_readable_time(seconds):
     readable_time = " e ".join(time_components)
   
   return readable_time
+
+def get_readable_date():
+  # Dizionari per i mesi e gli anni
+  months = {
+    1: "gennaio", 2: "febbraio", 3: "marzo", 4: "aprile",
+    5: "maggio", 6: "giugno", 7: "luglio", 8: "agosto",
+    9: "settembre", 10: "ottobre", 11: "novembre", 12: "dicembre"
+  }
+
+  years = {
+    2022: "duemilaventidue", 2023: "duemilaventitré", 2024: "duemilaventiquattro",
+    2025: "duemilaventicinque", 2026: "duemilaventisei", 2027: "duemilaventisette",
+    2028: "duemilaventotto", 2029: "duemilaventinove", 2030: "duemilatrenta",
+  }
+
+  # Ottieni la data corrente
+  now = datetime.now()
+
+  # Estrai giorno, mese, anno
+  giorno = now.day
+  month = months[now.month]
+  year = years[now.year]
+
+  # Crea la data in formato parole
+  date = f"{giorno} {month} {year}"
+
+def get_readable_time():
+  now = datetime.now()
+  # Formatta l'ora come hh:mm
+  return now.strftime("%H:%M")
