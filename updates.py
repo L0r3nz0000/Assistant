@@ -3,10 +3,11 @@ from tts import speak
 import subprocess
 
 def fetch_updates(update_available):
-  subprocess.run(["git", "fetch"])
-  local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
-  remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
-  if local != remote: update_available.set()
+  while True:
+    subprocess.run(["git", "fetch"])
+    local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
+    remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
+    if local != remote: update_available.set()
   
 def ask_for_updates(chat):
   question = "Ciao, è disponibile un aggiornamento, vuoi farlo ora?"
