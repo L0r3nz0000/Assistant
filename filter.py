@@ -108,17 +108,18 @@ def replace_tokens(text):
         text = text.replace(token, '')
       
       elif token == '$CHECK_UPDATES':
+        subprocess.run(["git", "fetch"])
         local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout
         remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout
         
-        print("Local:", local)
-        print("Remote:", remote)
+        print("Local hash:  ", local)
+        print("Remote hash: ", remote)
         
 
         if local == remote:
           speak("Non ho trovato aggiormamenti")
         else:
-          subprocess.Popen(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
+          subprocess.run(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
           speak("Sto scaricando gli aggiornamenti")
           
         text = text.replace(token, '')
