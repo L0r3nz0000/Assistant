@@ -1,5 +1,4 @@
 from redirect_output import suppress_stderr, restore_stderr
-from processes import kill_process_and_children
 from raspberry_pi import is_raspberry_pi
 from ChatState import ChatState
 import pvporcupine
@@ -63,7 +62,6 @@ def wake_word_callback(new_interaction, conversation_open, response_completed, a
   while True:
     blocking_wake_word(conversation_open, response_completed)
     if p.is_alive():
-      #kill_process_and_children(p.pid)
       os.kill(p.pid, signal.SIGTERM)
       print("Processo interrotto")
 
