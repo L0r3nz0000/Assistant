@@ -6,6 +6,7 @@ def fetch_updates(update_available):
   subprocess.run(["git", "fetch"])
   local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
   remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
+  print("aggiornamnti:", local != remote)
   if local != remote: update_available.set()
   
 def ask_for_updates(chat):
