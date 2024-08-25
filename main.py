@@ -1,5 +1,5 @@
 from wake_word import blocking_wake_word
-from updates import fetch_updates, ask_for_updates
+from updates import fetch_updates
 from ChatState import ChatState
 from stt import listen_prompt
 import multiprocessing
@@ -21,11 +21,11 @@ def new_interaction(conversation_open, response_completed, update_available):
     
   user_prompt = listen_prompt()  
 
-  process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed, update_available))
+  process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
   process.start()
   return process
 
-def interaction(chat, user_prompt, conversation_open, response_completed, update_available):
+def interaction(chat, user_prompt, conversation_open, response_completed):
   response_completed.clear()
 
   if user_prompt:
