@@ -12,19 +12,13 @@ echo "Attivando l'ambiente virtuale"
 source .venv/bin/activate
 pip install -r requirements.txt
 
-echo "Creando il file start.sh"
-echo "pulseaudio --start
-source $(pwd)/.venv/bin/activate
-python3 $(pwd)/main.py" > start.sh
-
-sudo chmod +x start.sh
-
 echo "[Unit]
 Description=Assistente vocale
 After=network.target
 
 [Service]
 ExecStart=$(pwd)/.venv/bin/python3 $(pwd)/main.py
+Environment="REPLICATE_API_TOKEN=<api_token>"
 WorkingDirectory=$(pwd)
 User=$(whoami)
 Restart=always
