@@ -104,6 +104,7 @@ def replace_tokens(text):
       elif token == '$REMOVE_HISTORY':
         with open("history.json", "w") as file:
           file.write("[]")
+        text = text.replace(token, tokens[token])
 
       elif token == '$SET_TIMER':
         matches = re.findall(pattern_timer, text)
