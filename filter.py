@@ -113,6 +113,7 @@ def replace_tokens(text):
         
         print("Local:", local)
         print("Remote:", remote)
+        
 
         if local == remote:
           speak("Non ho trovato aggiormamenti")
