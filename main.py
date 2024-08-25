@@ -74,4 +74,3 @@ if __name__ == "__main__":
 
     print("Sto creando un nuovo processo...")
     p = new_interaction(conversation_open, response_completed, update_available)
-    
