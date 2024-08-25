@@ -1,4 +1,4 @@
-from wake_word import wake_word_callback, blocking_wake_word
+from wake_word import blocking_wake_word
 from updates import fetch_updates, ask_for_updates
 from ChatState import ChatState
 from stt import listen_prompt
@@ -23,7 +23,7 @@ def interaction(user_prompt, conversation_open, response_completed, update_avail
   
   # Se ci sono aggiornamenti disponibili chiede all'utente se vuole farli
   if update_available.is_set():
-    ask_for_updates(chat)
+    user_prompt = ask_for_updates(chat)
 
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
@@ -42,6 +42,7 @@ def interaction(user_prompt, conversation_open, response_completed, update_avail
       
       speak(output)
   else:
+    print(f"input non valido: '{user_prompt}'")
     speak("Scusa, non ho capito.")
     conversation_open.clear()
   response_completed.set()
@@ -58,7 +59,7 @@ if __name__ == "__main__":
     system_prompt = file.read()
   
   blocking_wake_word(conversation_open, response_completed, update_available)
-  p = new_interaction(conversation_open, response_completed)
+  p = new_interaction(conversation_open, response_completed, update_available)
 
   while True:
     blocking_wake_word(conversation_open, response_completed, update_available)
@@ -67,4 +68,4 @@ if __name__ == "__main__":
       print("Processo interrotto")
 
     print("Sto creando un nuovo processo...")
-    p = new_interaction(conversation_open, response_completed)
+    p = new_interaction(conversation_open, response_completed, update_available)

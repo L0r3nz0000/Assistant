@@ -1,0 +1,18 @@
+[
+  {
+    "role": "user",
+    "message": "Che ore sono"
+  },
+  {
+    "role": "model",
+    "message": "\n\nSono le $TIME $END"
+  },
+  {
+    "role": "user",
+    "message": "puoi fare gli aggiornamenti"
+  },
+  {
+    "role": "model",
+    "message": "\n\n$UPDATE Sto facendo gli aggiornamenti $END"
+  }
+]

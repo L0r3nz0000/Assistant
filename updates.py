@@ -16,4 +16,4 @@ def ask_for_updates(chat):
   
   # Aspetta la risposta dell'utente
   prompt = listen_prompt()
-  chat.send_message(prompt)
+  return prompt#chat.send_message(prompt)
