@@ -1,6 +1,5 @@
-sudo su
-apt update
-apt install python3 python3-pip portaudio19-dev pulseaudio sox flac -y
+sudo apt update
+sudo apt install python3 python3-pip portaudio19-dev pulseaudio sox flac -y
 
 if [ -d ".venv" ]; then
   python3 -m venv .venv
@@ -10,7 +9,7 @@ pip install -r requirements.txt
 
 cd /etc/systemd/system/
 
-echo "[Unit]
+sudo echo "[Unit]
 Description=Assistente vocale
 After=network.target
 
