@@ -1,6 +1,6 @@
 sudo su
 apt update
-apt install python3 python3-pip portaudio19-dev -y
+apt install python3 python3-pip portaudio19-dev pulseaudio sox flac -y
 
 python3 -m venv .venv
 source .venv/bin/activate
