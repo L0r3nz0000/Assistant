@@ -1,7 +1,8 @@
 from redirect_output import suppress_stderr, restore_stderr
 from raspberry_pi import is_raspberry_pi
-from ChatState import ChatState
+from updates import fetch_updates
 import pvporcupine
+import threading
 import pyaudio
 import struct
 import signal
@@ -19,7 +20,7 @@ model_path = "wake_word_models/porcupine_params_it.pv"
 def get_next_audio_frame(): pass
 
 # Aspetta la parola di attivazione
-def blocking_wake_word(conversation_open, response_completed):
+def blocking_wake_word(conversation_open, response_completed, update_available):
   handle = pvporcupine.create(
     access_key=access_key,
     keyword_paths=[keyword_path],
@@ -41,8 +42,11 @@ def blocking_wake_word(conversation_open, response_completed):
 
   try:
     while True:
-      if response_completed.is_set() and conversation_open.is_set():
+      if update_available.is_set():
         return False
+      if response_completed.is_set() and conversation_open.is_set():
+        return True
+      
       pcm = audio_stream.read(handle.frame_length)
       pcm = struct.unpack_from("h" * handle.frame_length, pcm)
       keyword_index = handle.process(pcm)
@@ -54,16 +58,3 @@ def blocking_wake_word(conversation_open, response_completed):
     pa.terminate()              # Termina PyAudio
     handle.delete()             # Elimina l'handle di Porcupine
     restore_stderr(old_stderr)  # Ripristina lo stderr
-
-def wake_word_callback(new_interaction, conversation_open, response_completed, args=()):
-  blocking_wake_word(conversation_open, response_completed)
-  p = new_interaction(*args)
-
-  while True:
-    blocking_wake_word(conversation_open, response_completed)
-    if p.is_alive():
-      os.kill(p.pid, signal.SIGTERM)
-      print("Processo interrotto")
-
-    print("Sto creando un nuovo processo...")
-    p = new_interaction(*args)

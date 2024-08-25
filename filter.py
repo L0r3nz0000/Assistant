@@ -20,7 +20,7 @@ tokens = [
   '$OPEN_URL',
   '$SET_SPEED',
   '$REMOVE_HISTORY',
-  '$CHECK_UPDATES'
+  '$UPDATE'
 ]
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
@@ -107,10 +107,9 @@ def replace_tokens(text):
           file.write("[]")
         text = text.replace(token, '')
       
-      elif token == '$CHECK_UPDATES':
-        subprocess.run(["git", "fetch"])
-        local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout
-        remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout
+      elif token == '$UPDATE':
+        local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
+        remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
         
         print("Local hash:  ", local)
         print("Remote hash: ", remote)
@@ -119,7 +118,7 @@ def replace_tokens(text):
           speak("Non ho trovato aggiormamenti")
         else:
           speak("Sto scaricando gli aggiornamenti")
-          subprocess.run(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
+          subprocess.Popen(["chmod", "+x", "update.sh", "&&", "./update.sh"])
           
         text = text.replace(token, '')
         

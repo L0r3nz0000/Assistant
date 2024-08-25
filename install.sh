@@ -34,4 +34,4 @@ WantedBy=multi-user.target
 
 sudo systemctl daemon-reload
 
-chmod +x upgrade.sh
+chmod +x update.sh

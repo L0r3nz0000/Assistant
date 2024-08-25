@@ -1,20 +1,29 @@
 from wake_word import wake_word_callback, blocking_wake_word
+from updates import fetch_updates, ask_for_updates
 from ChatState import ChatState
 from stt import listen_prompt
 import multiprocessing
 from tts import speak
+import threading
+import signal
+import os
 
-def new_interaction(conversation_open, response_completed):
-  user_prompt = listen_prompt()
+def new_interaction(conversation_open, response_completed, update_available):
+  user_prompt = ""
+  if not update_available.is_set():
+    user_prompt = listen_prompt()
 
-  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open, response_completed))
+  process = multiprocessing.Process(target=interaction, args=(user_prompt, conversation_open, response_completed, update_available))
   process.start()
   return process
 
-def interaction(user_prompt, conversation_open, response_completed):
+def interaction(user_prompt, conversation_open, response_completed, update_available):
   response_completed.clear()
-
   chat = ChatState(system=system_prompt)
+  
+  # Se ci sono aggiornamenti disponibili chiede all'utente se vuole farli
+  if update_available.is_set():
+    ask_for_updates(chat)
 
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
@@ -40,8 +49,22 @@ def interaction(user_prompt, conversation_open, response_completed):
 if __name__ == "__main__":
   conversation_open = multiprocessing.Event()  # Default False
   response_completed = multiprocessing.Event()
+  update_available = multiprocessing.Event()
+  
+  updates_thread = threading.Thread(target=fetch_updates, args=(update_available,))
+  updates_thread.start()
 
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
   
-  wake_word_callback(new_interaction, conversation_open, response_completed, (conversation_open, response_completed))
+  blocking_wake_word(conversation_open, response_completed, update_available)
+  p = new_interaction(conversation_open, response_completed)
+
+  while True:
+    blocking_wake_word(conversation_open, response_completed, update_available)
+    if p.is_alive():
+      os.kill(p.pid, signal.SIGTERM)
+      print("Processo interrotto")
+
+    print("Sto creando un nuovo processo...")
+    p = new_interaction(conversation_open, response_completed)
