@@ -58,6 +58,9 @@ if __name__ == "__main__":
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
   
+  import time;time.sleep(3)
+  print("Aggiornamenti disponibili" if update_available.is_set() else "Aggiornamenti non disponibili")
+  
   blocking_wake_word(conversation_open, response_completed, update_available)
   p = new_interaction(conversation_open, response_completed, update_available)
 

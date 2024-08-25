@@ -42,10 +42,8 @@ def blocking_wake_word(conversation_open, response_completed, update_available):
 
   try:
     while True:
-      if update_available.is_set():
+      if response_completed.is_set() and conversation_open.is_set() or update_available.is_set():
         return False
-      if response_completed.is_set() and conversation_open.is_set():
-        return True
       
       pcm = audio_stream.read(handle.frame_length)
       pcm = struct.unpack_from("h" * handle.frame_length, pcm)
