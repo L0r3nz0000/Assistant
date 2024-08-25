@@ -108,7 +108,6 @@ def replace_tokens(text):
         text = text.replace(token, '')
       
       elif token == '$CHECK_UPDATES':
-        os.system("bash upgrade.sh")
         local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout
         remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout
         
