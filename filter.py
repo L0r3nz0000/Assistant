@@ -11,17 +11,17 @@ import re
 
 python_interpreter = "python3"
 
-tokens = {
-  '$TIME': get_readable_time(),
-  '$DATE': get_readable_date(),
-  '$SET_TIMER': '',
-  '$STOP_TIMER': '',
-  '$GET_TIMER_REMAINING': '',
-  '$OPEN_URL': '',
-  '$SET_SPEED': '',
-  '$REMOVE_HISTORY': '',
-  '$CHECK_UPDATES': ''
-}
+tokens = [
+  '$TIME',
+  '$DATE',
+  '$SET_TIMER',
+  '$STOP_TIMER',
+  '$GET_TIMER_REMAINING',
+  '$OPEN_URL',
+  '$SET_SPEED',
+  '$REMOVE_HISTORY',
+  '$CHECK_UPDATES'
+]
 
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
 pattern_stop_timer = r'\$STOP_TIMER (\d+)'                                            #   $STOP_TIMER id
@@ -105,7 +105,7 @@ def replace_tokens(text):
       elif token == '$REMOVE_HISTORY':
         with open("history.json", "w") as file:
           file.write("[]")
-        text = text.replace(token, tokens[token])
+        text = text.replace(token, '')
       
       elif token == '$CHECK_UPDATES':
         os.system("bash upgrade.sh")
@@ -118,7 +118,7 @@ def replace_tokens(text):
           subprocess.Popen(["chmod", "+x", "upgrade.sh", "&&", "./upgrade.sh"])
           speak("Sto scaricando gli aggiornamenti")
           
-        text = text.replace(token, tokens[token])
+        text = text.replace(token, '')
         
       elif token == '$SET_TIMER':
         matches = re.findall(pattern_timer, text)
@@ -209,7 +209,10 @@ def replace_tokens(text):
             webbrowser.open(url)  # Apre l'url nel browser
 
             text = re.sub(pattern_url, '', text)
-
-      else:
-        text = text.replace(token, tokens[token])
+      
+      elif token == '$TIME':
+        text = text.replace(token, get_readable_time())
+      
+      elif token == '$DATE':
+        text = text.replace(token, get_readable_date())
   return text
