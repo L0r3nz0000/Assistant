@@ -7,8 +7,6 @@ fi
 source .venv/bin/activate
 pip install -r requirements.txt
 
-cd /etc/systemd/system/
-
 echo "[Unit]
 Description=Assistente vocale
 After=network.target
