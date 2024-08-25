@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo apt update
 sudo apt install python3 python3-pip portaudio19-dev pulseaudio sox flac -y
 
@@ -12,13 +13,16 @@ echo "Attivando l'ambiente virtuale"
 source .venv/bin/activate
 pip install -r requirements.txt
 
+echo "Inserisci il token api di replicate: "
+read API_TOKEN
+
 echo "[Unit]
 Description=Assistente vocale
 After=network.target
 
 [Service]
 ExecStart=$(pwd)/.venv/bin/python3 $(pwd)/main.py
-Environment="REPLICATE_API_TOKEN=<api_token>"
+Environment="REPLICATE_API_TOKEN=$API_TOKEN"
 WorkingDirectory=$(pwd)
 User=$(whoami)
 Restart=always
