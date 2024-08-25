@@ -8,12 +8,13 @@ else
   echo "Ambiente virtuale python già presente"
 fi
 
+echo "Attivando l'ambiente virtuale"
 source .venv/bin/activate
 pip install -r requirements.txt
 
 echo "Creando il file start.sh"
 echo "pulseaudio --start
-source $(pwd).venv/bin/activate
+source $(pwd)/.venv/bin/activate
 python3 $(pwd)/main.py" > start.sh
 
 sudo chmod +x start.sh
