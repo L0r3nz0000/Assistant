@@ -57,7 +57,7 @@ def _start_timer(id, seconds):
   s.play()
 
   # Elimina il timer dalla lista
-  _remove_timer(id)
+  _remove_timer(timers, id)
   
 # Avvia un timer asincrono e ritorna il pid
 def start_timer(id, seconds):
@@ -83,8 +83,7 @@ def start_timer(id, seconds):
   
   return True
 
-def _remove_timer(id):
-  timers = _load_timers(file_path)
+def _remove_timer(timers, id):
   for i, timer in enumerate(timers):
     if timer["id"] == id:
       timers.pop(i)
@@ -96,18 +95,17 @@ def stop_timer(id):
   timers = _load_timers(file_path)
 
   # Cerca l'id del timer e lo interrompe inviando un SIGTERM al processo
-  for i, timer in enumerate(timers):
+  for timer in timers:
     if timer["id"] == id:
+      _remove_timer(timers, id)
       pid = timer["pid"]
-      _remove_timer(id)
-
+      
       try:
-        os.kill(pid, signal.SIGTERM)
-        #kill_process_and_children(pid)
+        #os.kill(pid, signal.SIGTERM)
+        kill_process_and_children(pid)
       except ProcessLookupError:
         print("Il timer non è stato trovato, forse era già scaduto?")
       
-      _save(timers)
       return True
   return False
 

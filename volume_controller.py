@@ -21,5 +21,6 @@ def set_volume(sink_id, volume):
 def set_master_volume(volume):
   if volume >= 0 and volume <= 100:
     subprocess.Popen(["amixer", "sset", "'Master'", f"{volume}%"], stdout=subprocess.PIPE)
+    print("Volume impostato a:", volume)
   else:
     print("Invalid parameter volume:", volume)

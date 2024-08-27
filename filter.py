@@ -1,5 +1,6 @@
 from readable_time import convert_seconds_to_readable_time, get_readable_time, get_readable_date
-from timer import start_timer, save_timer, stop_timer, _get_timer_pid, get_remaining
+from timer import start_timer, stop_timer, _get_timer_pid, get_remaining
+from volume_controller import set_master_volume
 from events import new_event
 from tts import speak
 import webbrowser
@@ -20,9 +21,11 @@ tokens = [
   '$OPEN_URL',
   '$SET_SPEED',
   '$REMOVE_HISTORY',
-  '$UPDATE'
+  '$UPDATE',
+  '$SET_MASTER_VOLUME'
 ]
 
+pattern_volume = r'\$SET_MASTER_VOLUME (\d+)'                                         #   $SET_MASTER_VOLUME percentage
 pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
 pattern_stop_timer = r'\$STOP_TIMER (\d+)'                                            #   $STOP_TIMER id
 pattern_remaining = r'\$GET_TIMER_REMAINING (\d+)'                                    #   $GET_TIMER_REMAINING id
@@ -98,7 +101,7 @@ def replace_tokens(text):
             except:
               speak("Non sono riuscito a creare l'evento")
 
-            text = re.sub(pattern_event, '', text)
+          text = re.sub(pattern_event, '', text)
         else:
           speak("Non sono riuscito a creare l'evento")
       
@@ -137,8 +140,20 @@ def replace_tokens(text):
             except ValueError:
               speak("Non sono riuscito ad impostare il timer")
 
-            text = re.sub(pattern_timer, '', text)
+          text = re.sub(pattern_timer, '', text)
       
+      elif token == '$SET_MASTER_VOLUME':
+        matches = re.findall(pattern_volume, text)
+        if matches:
+          for match in matches:
+            try:
+              percentage = int(match)
+              set_master_volume(percentage)
+              
+            except ValueError:
+              print("Errore nell'impostazione del volume")
+          text = re.sub(pattern_volume, '', text)
+                  
       elif token == '$GET_TIMER_REMAINING':
         matches = re.findall(pattern_remaining, text)
         if matches:
@@ -161,7 +176,7 @@ def replace_tokens(text):
         if matches:
           for match in matches:
             try:
-              id = int(match[0])
+              id = int(match)
               pid = _get_timer_pid(id)
 
               if pid != -1:
@@ -169,12 +184,14 @@ def replace_tokens(text):
                   print(f"Timer id:{id} pid:{pid} interrotto")
                 else:
                   speak(f"Non ho trovato nessun timer con id {id}")
+                  print(f"Non ho trovato nessun timer con id {id}")
               else:
                 speak("Non sono riuscito ad interrompere il timer")
+                print("Non sono riuscito ad interrompere il timer")
             except ValueError:
               speak("Non sono riuscito ad interrompere il timer")
 
-            text = re.sub(pattern_stop_timer, '', text)
+          text = re.sub(pattern_stop_timer, '', text)
       
       elif token == '$SET_SPEED':
         matches = re.findall(pattern_speed, text)
@@ -201,7 +218,7 @@ def replace_tokens(text):
               speak("Non sono riuscito a modificare la velocità")
               print("Exception:", e)
 
-            text = re.sub(pattern_speed, '', text)
+          text = re.sub(pattern_speed, '', text)
 
       elif token == '$OPEN_URL':
         matches = re.findall(pattern_url, text)
@@ -210,7 +227,7 @@ def replace_tokens(text):
             print("Apro l'url:", url)
             webbrowser.open(url)  # Apre l'url nel browser
 
-            text = re.sub(pattern_url, '', text)
+          text = re.sub(pattern_url, '', text)
       
       elif token == '$TIME':
         text = text.replace(token, get_readable_time())
