@@ -16,4 +16,10 @@ def get_playing_audio_apps():
 
 def set_volume(sink_id, volume):
   # Imposta il volume del sink input specificato
-  subprocess.run(['pactl', 'set-sink-input-volume', sink_id, f'{volume}%'])
+  subprocess.Popen(['pactl', 'set-sink-input-volume', sink_id, f'{volume}%'], stdout=subprocess.PIPE)
+
+def set_master_volume(volume):
+  if volume >= 0 and volume <= 100:
+    subprocess.Popen(["amixer", "sset", "'Master'", f"{volume}%"], stdout=subprocess.PIPE)
+  else:
+    print("Invalid parameter volume:", volume)
