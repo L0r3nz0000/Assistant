@@ -25,12 +25,12 @@ tokens = [
   '$SET_MASTER_VOLUME'
 ]
 
-pattern_volume = r'\$SET_MASTER_VOLUME (\d+)'                                         #   $SET_MASTER_VOLUME percentage
-pattern_timer = r'\$SET_TIMER (\d+) (\d+)'                                            #   $SET_TIMER id seconds
-pattern_stop_timer = r'\$STOP_TIMER (\d+)'                                            #   $STOP_TIMER id
-pattern_remaining = r'\$GET_TIMER_REMAINING (\d+)'                                    #   $GET_TIMER_REMAINING id
-pattern_speed = r'\$SET_SPEED (\d+(\.\d+)?)'                                          #   $SET_SPEED speed
-pattern_url = r'\$OPEN_URL (\S+)'                                                     #   $OPEN_URL url
+pattern_volume = r'\$SET_MASTER_VOLUME\s+(\d+)'                                         #   $SET_MASTER_VOLUME percentage
+pattern_timer = r'\$SET_TIMER\s+(\d+)\s+(\d+)'                                            #   $SET_TIMER id seconds
+pattern_stop_timer = r'\$STOP_TIMER\s+(\d+)'                                            #   $STOP_TIMER id
+pattern_remaining = r'\$GET_TIMER_REMAINING\s+(\d+)'                                    #   $GET_TIMER_REMAINING id
+pattern_speed = r'\$SET_SPEED\s+(\d+(\.\d+)?)'                                          #   $SET_SPEED speed
+pattern_url = r'\$OPEN_URL\s+(\S+)'                                                     #   $OPEN_URL url
 pattern_python = r'```python(.*?)```'                                                 #   ```python    code    ```
 pattern_bash = r'```bash(.*?)```'                                                     #   ```bash      code    ```
 pattern_event = r'\$NEW_EVENT\s+(\S+)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{1,2})'  #   $NEW_EVENT titolo dd/mm/yyyy hh:mm
@@ -159,7 +159,7 @@ def replace_tokens(text):
         if matches:
           for match in matches:
             try:
-              id = int(match[0])
+              id = int(match)
 
               remaining = get_remaining(id)
               readable_time = convert_seconds_to_readable_time(remaining)
