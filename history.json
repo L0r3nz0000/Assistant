@@ -1,0 +1,18 @@
+[
+  {
+    "role": "user",
+    "message": "Puoi dirmi la data dell'ora di oggi"
+  },
+  {
+    "role": "model",
+    "message": "\n\nLa data odierna \u00e8 il `from datetime import date; print(date.today().strftime(\"%d/%m/%Y\"))`."
+  },
+  {
+    "role": "user",
+    "message": "Che ore sono"
+  },
+  {
+    "role": "model",
+    "message": "\n\nLa ora attuale \u00e8 `from datetime import datetime; print(datetime.now().strftime(\"%H:%M\"))`."
+  }
+]

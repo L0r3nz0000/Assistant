@@ -47,7 +47,7 @@ def get_readable_date():
   year = years[now.year]
 
   # Crea la data in formato parole
-  date = f"{giorno} {month} {year}"
+  return f"{giorno} {month} {year}"
 
 def get_readable_time():
   now = datetime.now()
