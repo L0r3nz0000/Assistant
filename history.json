@@ -8,5 +8,15 @@
     "role": "model",
     "message": "\n\nSono le 12:48 del 30 agosto 2024.",
     "timestamp": "Timestamp: 30 agosto duemilaventiquattro 12:48"
+  },
+  {
+    "role": "user",
+    "message": "Che ore sono",
+    "timestamp": "Timestamp: 30/08/2024 12:53"
+  },
+  {
+    "role": "model",
+    "message": "\n\nSono le 12:53 del 30 agosto 2024.",
+    "timestamp": "Timestamp: 30/08/2024 12:53"
   }
 ]
