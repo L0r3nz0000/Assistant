@@ -31,12 +31,12 @@ class Sound:
       self.delay_process.start()
       return self.delay_process.pid
     else:
-      subprocess.run(["play", self.filename, "tempo", str(self.speed)],
+      subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL)
   
   def play(self):
-    subprocess.run(["play", self.filename, "tempo", str(self.speed)],
+    subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],
       stdout=subprocess.DEVNULL,
       stderr=subprocess.STDOUT)
   

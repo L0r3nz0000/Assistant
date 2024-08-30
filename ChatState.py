@@ -1,4 +1,6 @@
+from readable_time import get_readable_date, get_readable_time
 from filter import replace_tokens
+from datetime import datetime
 import replicate
 import json
 import os
@@ -35,9 +37,9 @@ class ChatState:
   def _load_history_from_json(self):
     for interaction in self.history_json:
       if interaction["role"] == "user":
-        self.history.append(self.__START_TURN_USER__ + interaction["message"] + self.__END_TURN__)
+        self.history.append(self.__START_TURN_USER__ + interaction['timestamp'] + '\n' + interaction["message"] + self.__END_TURN__)
       elif interaction["role"] == "model":
-        self.history.append(self.__START_TURN_MODEL__ + interaction["message"] + self.__END_TURN__)
+        self.history.append(self.__START_TURN_MODEL__ + interaction['timestamp'] + '\n' + interaction["message"] + self.__END_TURN__)
 
   def _load_settings_from_file(self, file_path):
     if os.path.exists(file_path):
@@ -59,22 +61,30 @@ class ChatState:
     """
     Adds a user message to the history with start/end turn markers.
     """
-    self.history.append(self.__START_TURN_USER__ + message + self.__END_TURN__)
+    now = datetime.now()
+    
+    timestamp = f'Timestamp: {now.strftime("%d/%m/%Y")} {now.strftime("%H:%M")}'
+    self.history.append(self.__START_TURN_USER__ + timestamp + '\n' + message + self.__END_TURN__)
 
     self.history_json.append({
       "role": "user",
-      "message": message
+      "message": message,
+      "timestamp": timestamp
     })
 
   def add_to_history_as_model(self, message):
     """
     Adds a model response to the history with start/end turn markers.
     """
-    self.history.append(self.__START_TURN_MODEL__ + message + self.__END_TURN__)
+    now = datetime.now()
+    
+    timestamp = f'Timestamp: {now.strftime("%d/%m/%Y")} {now.strftime("%H:%M")}'
+    self.history.append(self.__START_TURN_MODEL__ + timestamp + '\n' + message + self.__END_TURN__)
 
     self.history_json.append({
       "role": "model",
-      "message": message
+      "message": message,
+      "timestamp": timestamp
     })
 
   def get_history(self):

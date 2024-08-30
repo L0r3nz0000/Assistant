@@ -8,6 +8,10 @@ $SET_SPEED speed -> imposta la velocità dell'output vocale (default 1.1), per e
 $REMOVE_HISTORY -> elimina la cronologia della chat
 $UPDATE -> esegue l'aggiornamento del software dell'assistente, per esempio "$UPDATE Sto facendo gli aggiornamenti $END"
 $SET_MASTER_VOLUME percentage -> imposta il master volume in precentuale
+$PAUSE -> mette in pausa la musica
+$RESUME -> riprende la riproduzione della musica
+$NEXT_TRACK -> salta alla traccia successiva
+$PREV_TRACK -> torna all'inizio della canzone
 $END -> termina la conversazione, per esempio "output... $END"
 Se vuoi eseguire codice puoi usare questi tag:
 per il codice python

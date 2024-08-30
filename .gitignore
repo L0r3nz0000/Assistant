@@ -1,2 +1,6 @@
-.venv/
-__pycache__/
+spotify-free-api
+sounds/output.mp3
+.venv
+__pycache__
+.lprof
+history.json

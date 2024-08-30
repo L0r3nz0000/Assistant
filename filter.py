@@ -6,6 +6,7 @@ from tts import speak
 import webbrowser
 import subprocess
 import threading
+import requests
 import json
 import os
 import re
@@ -13,8 +14,6 @@ import re
 python_interpreter = "python3"
 
 tokens = [
-  '$TIME',
-  '$DATE',
   '$SET_TIMER',
   '$STOP_TIMER',
   '$GET_TIMER_REMAINING',
@@ -22,15 +21,19 @@ tokens = [
   '$SET_SPEED',
   '$REMOVE_HISTORY',
   '$UPDATE',
-  '$SET_MASTER_VOLUME'
+  '$SET_MASTER_VOLUME',
+  '$PAUSE',
+  '$RESUME',
+  '$NEXT_TRACK',
+  '$PREV_TRACK'
 ]
 
-pattern_volume = r'\$SET_MASTER_VOLUME\s+(\d+)'                                         #   $SET_MASTER_VOLUME percentage
-pattern_timer = r'\$SET_TIMER\s+(\d+)\s+(\d+)'                                            #   $SET_TIMER id seconds
-pattern_stop_timer = r'\$STOP_TIMER\s+(\d+)'                                            #   $STOP_TIMER id
-pattern_remaining = r'\$GET_TIMER_REMAINING\s+(\d+)'                                    #   $GET_TIMER_REMAINING id
-pattern_speed = r'\$SET_SPEED\s+(\d+(\.\d+)?)'                                          #   $SET_SPEED speed
-pattern_url = r'\$OPEN_URL\s+(\S+)'                                                     #   $OPEN_URL url
+pattern_volume = r'\$SET_MASTER_VOLUME\s+(\d+)'                                       #   $SET_MASTER_VOLUME percentage
+pattern_timer = r'\$SET_TIMER\s+(\d+)\s+(\d+)'                                        #   $SET_TIMER id seconds
+pattern_stop_timer = r'\$STOP_TIMER\s+(\d+)'                                          #   $STOP_TIMER id
+pattern_remaining = r'\$GET_TIMER_REMAINING\s+(\d+)'                                  #   $GET_TIMER_REMAINING id
+pattern_speed = r'\$SET_SPEED\s+(\d+(\.\d+)?)'                                        #   $SET_SPEED speed
+pattern_url = r'\$OPEN_URL\s+(\S+)'                                                   #   $OPEN_URL url
 pattern_python = r'```python(.*?)```'                                                 #   ```python    code    ```
 pattern_bash = r'```bash(.*?)```'                                                     #   ```bash      code    ```
 pattern_event = r'\$NEW_EVENT\s+(\S+)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{1,2})'  #   $NEW_EVENT titolo dd/mm/yyyy hh:mm
@@ -229,9 +232,19 @@ def replace_tokens(text):
 
           text = re.sub(pattern_url, '', text)
       
-      elif token == '$TIME':
-        text = text.replace(token, get_readable_time())
+      elif token == '$PAUSE':
+        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/pause',)).start()
+        text = text.replace(token, '')
       
-      elif token == '$DATE':
-        text = text.replace(token, get_readable_date())
+      elif token == '$RESUME':
+        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/resume',)).start()
+        text = text.replace(token, '')
+      
+      elif token == '$NEXT_TRACK':
+        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/next_track',)).start()
+        text = text.replace(token, '')
+        
+      elif token == '$PREV_TRACK':
+        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/prev_track',)).start()
+        text = text.replace(token, '')
   return text

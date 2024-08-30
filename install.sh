@@ -1,6 +1,12 @@
 #!/bin/bash
 sudo apt update
-sudo apt install python3 python3-pip portaudio19-dev pulseaudio sox libsox-fmt-mp3 flac -y
+sudo apt install python3 python3-pip portaudio19-dev pulseaudio mpv flac -y
+
+git clone https://github.com/L0r3nz0000/spotify-free-api.git
+cd spotify-free-api
+python3 -m venv .env
+.env/bin/pip install -r requirements.txt
+cd ..
 
 if [ ! -d ".venv" ]; then
   echo "Sto creando l'ambiente virtuale"

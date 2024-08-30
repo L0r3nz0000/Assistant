@@ -1,18 +1,12 @@
 [
   {
     "role": "user",
-    "message": "Puoi dirmi la data dell'ora di oggi"
+    "message": "Che ore sono",
+    "timestamp": "Timestamp: 30 agosto duemilaventiquattro 12:48"
   },
   {
     "role": "model",
-    "message": "\n\nLa data odierna \u00e8 il `from datetime import date; print(date.today().strftime(\"%d/%m/%Y\"))`."
-  },
-  {
-    "role": "user",
-    "message": "Che ore sono"
-  },
-  {
-    "role": "model",
-    "message": "\n\nLa ora attuale \u00e8 `from datetime import datetime; print(datetime.now().strftime(\"%H:%M\"))`."
+    "message": "\n\nSono le 12:48 del 30 agosto 2024.",
+    "timestamp": "Timestamp: 30 agosto duemilaventiquattro 12:48"
   }
 ]
