@@ -1,2 +1,33 @@
 [
+  {
+    "role": "model",
+    "message": "Ciao, \u00e8 disponibile un aggiornamento, vuoi farlo ora?"
+  },
+  {
+    "role": "user",
+    "message": " Grazie per la visione!",
+    "timestamp": "Timestamp: 31/08/2024 22:39"
+  },
+  {
+    "role": "model",
+    "message": "\n\nPrego! Spero che il mio aiuto sia stato utile. Se hai bisogno di qualcosa in futuro, non esitare a chiamarmi. $END"
+  },
+  {
+    "role": "user",
+    "message": " Pausa.",
+    "timestamp": "Timestamp: 31/08/2024 22:40"
+  },
+  {
+    "role": "model",
+    "message": "\n\n$PAUSE Musica in pausa. $END"
+  },
+  {
+    "role": "user",
+    "message": " Prossima canzone.",
+    "timestamp": "Timestamp: 31/08/2024 22:40"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n$NEXT_TRACK Sto passando alla traccia successiva. $END"
+  }
 ]
