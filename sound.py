@@ -23,17 +23,15 @@ class Sound:
   
   def _delayed_play(self, delay):
     sleep(delay)
-    self.delayed_play(0)
+    self.play()
 
   def delayed_play(self, delay):
-    if delay > 0:
-      self.delay_process = multiprocessing.Process(target=self._delayed_play, args=(delay,))
-      self.delay_process.start()
-      return self.delay_process.pid
-    else:
-      subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL)
+    self.delay_process = multiprocessing.Process(target=self._delayed_play, args=(delay,))
+    self.delay_process.start()
+    return self.delay_process.pid
+
+  def async_play(self):
+    self.delayed_play(0)
   
   def play(self):
     subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],

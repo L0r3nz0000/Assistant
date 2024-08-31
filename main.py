@@ -9,6 +9,7 @@ from tts import speak
 import subprocess
 import threading
 import signal
+import json
 import os
 
 chat = None
@@ -17,7 +18,10 @@ def new_interaction(conversation_open, response_completed, update_available):
   chat = ChatState(system=system_prompt)
   user_prompt = ""
   
-  if update_available.is_set():
+  with open('settings.json', 'r') as file:
+    settings = json.load(file)
+  
+  if update_available.is_set() and settings['ask_for_updates']:
     update_available.clear()
     question = "Ciao, è disponibile un aggiornamento, vuoi farlo ora?"
     speak(question)
@@ -52,8 +56,6 @@ def interaction(chat, user_prompt, conversation_open, response_completed):
       speak(output)
   else:
     print(f"input non valido: '{user_prompt}'")
-    s = Sound('sounds/end.mp3')
-    s.play()
     conversation_open.clear()
   response_completed.set()
 

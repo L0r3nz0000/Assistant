@@ -10,7 +10,6 @@ import json
 
 
 def save_audio_to_mp3(audio: sr.AudioData, output_path: str):
-  start = time()
   # Ottieni i dati audio grezzi dall'oggetto AudioData
   raw_data = audio.get_raw_data()
 
@@ -24,7 +23,6 @@ def save_audio_to_mp3(audio: sr.AudioData, output_path: str):
 
   # Salva l'audio come file MP3
   audio_segment.export(output_path, format="mp3")
-  print(f"[{time() - start:.2f}s] Audio salvato in {output_path}")
     
 def upload_audio(audio: sr.AudioData) -> str:
   """
@@ -38,7 +36,6 @@ def upload_audio(audio: sr.AudioData) -> str:
   # Converte il file in mp3 per trasferirlo più velocemente
   save_audio_to_mp3(audio, file_path)
   
-  start = time()
   # Apri il file in modalità binaria
   with open(file_path, 'rb') as file:
     # Crea un dizionario con il file da caricare
@@ -49,7 +46,6 @@ def upload_audio(audio: sr.AudioData) -> str:
     
     # Controlla la risposta
     if response.status_code == 200:
-      print(f"[{time() - start:.2f}s] File audio caricato su 0x0.st")
       return response.text.strip()
     else:
       print(f'Errore nel caricamento del file: {response.status_code}')
@@ -74,7 +70,7 @@ def transcribe_incredibly_fast_whisper(audio: sr.AudioData):
   else:
     return 
 
-def listen_prompt(timeout=10):
+def listen_prompt(timeout=8):
   # Ottiene la lista delle app che stanno riproducendo audio
   active_sinks = volume_controller.get_playing_audio_apps()
 
@@ -91,7 +87,7 @@ def listen_prompt(timeout=10):
 
   # Riproduce il suono di attivazione
   s = Sound("sounds/active.mp3")
-  s.delayed_play(delay=.3)
+  s.async_play()
 
   # Ridireziona lo stderr a /dev/null
   old_stderr = suppress_stderr()
@@ -102,7 +98,9 @@ def listen_prompt(timeout=10):
     print("Sono in ascolto... parla pure!")
     start = time()
     try:
-      audio = r.listen(source, timeout=30, phrase_time_limit=timeout)
+      audio = r.listen(source, timeout=8, phrase_time_limit=timeout)
+      s = Sound('sounds/end.mp3')
+      s.async_play()
       print(f"[{time() - start:.2f}s] Audio registrato")
 
       # Riporta il volume delle app attive al valore iniziale
@@ -110,11 +108,17 @@ def listen_prompt(timeout=10):
         volume_controller.set_volume(sink_id, 100)
 
       try:
-        print("Whisper sta elaborando il messaggio...")
+        # print("Whisper sta elaborando il messaggio...")
+        # start = time()
+        
+        # text = transcribe_incredibly_fast_whisper(audio)
+        # print(f"[{time() - start:.2f}s] Messaggio elaborato con whisper")
+        
+        print("Google sta elaborando il messaggio...")
         start = time()
         
-        text = transcribe_incredibly_fast_whisper(audio)
-        print(f"[{time() - start:.2f}s] Messaggio elaborato")
+        text = r.recognize_google(audio, language="it-IT")
+        print(f"[{time() - start:.2f}s] Messaggio elaborato con google")
       except Exception as e:
         print("Exception:", e)
     except sr.exceptions.WaitTimeoutError:
