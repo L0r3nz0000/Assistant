@@ -1,5 +1,6 @@
 from timer import start_timer, stop_timer, _get_timer_pid, get_remaining
 from volume_controller import set_master_volume
+from readable_time import convert_seconds_to_readable_time
 from events import new_event
 from tts import speak
 import webbrowser
@@ -79,6 +80,7 @@ def execute_and_remove_code_blocks(text, remove=False):
   
   return modified_text if remove else text
 
+# TODO: refactor this function
 def replace_tokens(text):
   text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
   text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash

@@ -2,7 +2,9 @@ from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
 from stt import listen_prompt
+from sound import Sound
 import multiprocessing
+from time import time
 from tts import speak
 import subprocess
 import threading
@@ -22,7 +24,7 @@ def new_interaction(conversation_open, response_completed, update_available):
     
     chat.add_to_history_as_model(question)
     
-  user_prompt = listen_prompt()  
+  user_prompt = listen_prompt()
 
   process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
   process.start()
@@ -33,8 +35,9 @@ def interaction(chat, user_prompt, conversation_open, response_completed):
 
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
-
+    start = time()
     output = chat.send_message(user_prompt).strip()
+    print(f"[{time() - start:.2f}s] Ottenuta risposta testuale da llama.")
     print('\033[94m' + 'Model:' + '\033[39m', output)
 
     if output:
@@ -49,7 +52,8 @@ def interaction(chat, user_prompt, conversation_open, response_completed):
       speak(output)
   else:
     print(f"input non valido: '{user_prompt}'")
-    speak("Scusa, non ho capito.")
+    s = Sound('sounds/end.mp3')
+    s.play()
     conversation_open.clear()
   response_completed.set()
 
@@ -67,7 +71,6 @@ if __name__ == "__main__":
   # Carica il prompt system dal file
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
-  
   
   # Loop eventi
   blocking_wake_word(conversation_open, response_completed, update_available)

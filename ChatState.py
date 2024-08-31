@@ -38,7 +38,7 @@ class ChatState:
       if interaction["role"] == "user":
         self.history.append(self.__START_TURN_USER__ + interaction['timestamp'] + '\n' + interaction["message"] + self.__END_TURN__)
       elif interaction["role"] == "model":
-        self.history.append(self.__START_TURN_MODEL__ + interaction['timestamp'] + '\n' + interaction["message"] + self.__END_TURN__)
+        self.history.append(self.__START_TURN_MODEL__ + interaction["message"] + self.__END_TURN__)
 
   def _load_settings_from_file(self, file_path):
     if os.path.exists(file_path):
@@ -75,15 +75,11 @@ class ChatState:
     """
     Adds a model response to the history with start/end turn markers.
     """
-    now = datetime.now()
-    
-    timestamp = f'Timestamp: {now.strftime("%d/%m/%Y")} {now.strftime("%H:%M")}'
-    self.history.append(self.__START_TURN_MODEL__ + timestamp + '\n' + message + self.__END_TURN__)
+    self.history.append(self.__START_TURN_MODEL__ + message + self.__END_TURN__)
 
     self.history_json.append({
       "role": "model",
-      "message": message,
-      "timestamp": timestamp
+      "message": message
     })
 
   def get_history(self):

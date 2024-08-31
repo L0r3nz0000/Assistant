@@ -1,14 +1,17 @@
 from markdown import remove_markdown
 import volume_controller
 from sound import Sound
+from time import time
 import requests
 import base64
 import json
 import os
 
-endpoint = "https://audio.api.speechify.com/generateAudioFiles"
+# best voices: palmira, fiamma, lisandro, marcellomultilingual
 
-def _text_to_audio(text):
+def _text_to_audio(text, voice):
+  start = time()
+  url = "https://audio.api.speechify.com/generateAudioFiles"
   text = remove_markdown(text)
   json = {
     "audioFormat": "mp3",
@@ -18,11 +21,11 @@ def _text_to_audio(text):
     "voiceParams": {
       "engine": "azure",
       "languageCode": "it-IT",
-      "name": "palmira"
+      "name": voice
     }
   }
 
-  r = requests.post(endpoint, json=json)
+  r = requests.post(url, json=json)
 
   if "audioStream" not in r.json():
     return
@@ -34,10 +37,12 @@ def _text_to_audio(text):
 
   with open(output_file_name, "wb") as output_file:
     output_file.write(mp3_bytes)
+  
+  print(f"[{time() - start:.2f}s] Ottenuta la risposta vocale da azure.")
   return output_file_name
 
-def speak(text):
-  filename = _text_to_audio(text)
+def speak(text, voice="fiamma"):
+  filename = _text_to_audio(text, voice)
 
   with open("settings.json", "r") as file:
     settings = json.load(file)
