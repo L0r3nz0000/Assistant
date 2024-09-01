@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "role": "user",
+    "message": "pausa",
+    "timestamp": "Timestamp: 01/09/2024 02:56"
+  },
+  {
+    "role": "model",
+    "message": "\n\n$PAUSE La musica \u00e8 stata messa in pausa. $END"
+  },
+  {
+    "role": "user",
+    "message": "riprendi la musica col volume a 20",
+    "timestamp": "Timestamp: 01/09/2024 02:59"
+  },
+  {
+    "role": "model",
+    "message": "\n\n$SET_MASTER_VOLUME 20 La musica \u00e8 stata ripresa e il volume \u00e8 stato impostato al 20%. $RESUME $END"
+  },
+  {
+    "role": "user",
+    "message": "Che ore sono",
+    "timestamp": "Timestamp: 01/09/2024 03:03"
+  },
+  {
+    "role": "model",
+    "message": "\n\nSono le 03:03 del 01/09/2024. $END"
+  },
+  {
+    "role": "user",
+    "message": "pausa",
+    "timestamp": "Timestamp: 01/09/2024 03:07"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n$PAUSE La musica \u00e8 stata messa in pausa. $END"
+  },
+  {
+    "role": "user",
+    "message": "pausa",
+    "timestamp": "Timestamp: 01/09/2024 10:34"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\nLa musica \u00e8 gi\u00e0 stata messa in pausa. Non c'\u00e8 nulla da fare. $END"
+  },
+  {
+    "role": "user",
+    "message": "ti ho detto di mettere in pausa",
+    "timestamp": "Timestamp: 01/09/2024 10:35"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\nLa musica \u00e8 gi\u00e0 stata messa in pausa. Non c'\u00e8 nulla da fare. $END"
+  }
+]
