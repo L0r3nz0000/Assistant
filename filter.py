@@ -1,6 +1,6 @@
 from timer import start_timer, stop_timer, _get_timer_pid, get_remaining
-from volume_controller import set_master_volume
 from readable_time import convert_seconds_to_readable_time
+from volume_controller import set_master_volume
 from events import new_event
 from tts import speak
 import webbrowser
@@ -13,21 +13,10 @@ import re
 
 python_interpreter = "python3"
 
-tokens = [
-  '$SET_TIMER',
-  '$STOP_TIMER',
-  '$GET_TIMER_REMAINING',
-  '$OPEN_URL',
-  '$SET_SPEED',
-  '$REMOVE_HISTORY',
-  '$UPDATE',
-  '$SET_MASTER_VOLUME',
-  '$PAUSE',
-  '$RESUME',
-  '$NEXT_TRACK',
-  '$PREV_TRACK'
-]
-
+pattern_play_artist = r'\$PLAY_ARTIST\s+([^\n]+)'                                     #   $PLAY_ARTIST name
+pattern_play_playlist = r'\$PLAY_PLAYLIST\s+([^\n]+)'                                 #   $PLAY_PLAYLIST name
+pattern_play_album = r'\$PLAY_ALBUM\s+([^\n]+)'                                       #   $PLAY_ALBUM name
+pattern_play_song = r'\$PLAY_SONG\s+([^\n]+)'                                         #   $PLAY_SONG name
 pattern_volume = r'\$SET_MASTER_VOLUME\s+(\d+)'                                       #   $SET_MASTER_VOLUME percentage
 pattern_timer = r'\$SET_TIMER\s+(\d+)\s+(\d+)'                                        #   $SET_TIMER id seconds
 pattern_stop_timer = r'\$STOP_TIMER\s+(\d+)'                                          #   $STOP_TIMER id
@@ -80,172 +69,240 @@ def execute_and_remove_code_blocks(text, remove=False):
   
   return modified_text if remove else text
 
+def new_event(text, token):
+  matches = re.findall(pattern_event, text)
+  if matches:
+    for match in matches:
+      try:
+        title = match[0]
+        date = match[1]
+        time = match[2]
+
+        event = {
+          "title": title,
+          "date": date,
+          "time": time
+        }
+        new_event(event)
+      except:
+        speak("Non sono riuscito a creare l'evento")
+
+    text = re.sub(pattern_event, '', text)
+  else:
+    speak("Non sono riuscito a creare l'evento")
+  return text
+  
+def remove_history(text, token):
+  with open("history.json", "w") as file:
+    file.write("[]")
+  return text.replace(token, '')
+
+def update(text, token):
+  local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
+  remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
+  
+  print("Local hash:  ", local)
+  print("Remote hash: ", remote)
+  
+  if local == remote:
+    speak("Non ho trovato aggiormamenti")
+  else:
+    subprocess.run(["chmod", "+x", "update.sh"])
+    subprocess.Popen(["./update.sh"])
+    
+  return text.replace(token, '')
+
+def set_timer(text, token):
+  matches = re.findall(pattern_timer, text)
+  if matches:
+    for match in matches:
+      try:
+        id = int(match[0])
+        seconds = int(match[1])
+
+        if not start_timer(id, seconds):  # Imposta un timer
+          print(f"Impossibile creare due timer con lo stesso id: {id}")
+          speak("Non sono riuscito ad impostare il timer")
+
+      except ValueError:
+        speak("Non sono riuscito ad impostare il timer")
+
+    text = re.sub(pattern_timer, '', text)
+  return text
+  
+def set_volume(text, token):
+  matches = re.findall(pattern_volume, text)
+  if matches:
+    for match in matches:
+      try:
+        percentage = int(match)
+        set_master_volume(percentage)
+        
+      except ValueError:
+        print("Errore nell'impostazione del volume")
+    text = re.sub(pattern_volume, '', text)
+  return text
+                  
+def get_timer_remaining(text, token):
+  matches = re.findall(pattern_remaining, text)
+  if matches:
+    for match in matches:
+      try:
+        id = int(match)
+
+        remaining = get_remaining(id)
+        readable_time = convert_seconds_to_readable_time(remaining)
+
+      except Exception as e:
+        speak("Non sono riuscito ad ottenere informazioni sul timer")
+        print("Exception:", e)
+
+      if remaining != -1:
+        text = re.sub(pattern_remaining, readable_time, text)
+  return text
+  
+def _stop_timer(text, token):
+  matches = re.findall(pattern_stop_timer, text)
+  if matches:
+    for match in matches:
+      try:
+        id = int(match)
+        pid = _get_timer_pid(id)
+
+        if pid != -1:
+          if stop_timer(id):  # Interrompe il timer
+            print(f"Timer id:{id} pid:{pid} interrotto")
+          else:
+            speak(f"Non ho trovato nessun timer con id {id}")
+            print(f"Non ho trovato nessun timer con id {id}")
+        else:
+          speak("Non sono riuscito ad interrompere il timer")
+          print("Non sono riuscito ad interrompere il timer")
+      except ValueError:
+        speak("Non sono riuscito ad interrompere il timer")
+
+    text = re.sub(pattern_stop_timer, '', text)
+  return text
+  
+def set_speed(text, token):
+  matches = re.findall(pattern_speed, text)
+  if matches:
+    for match in matches:
+      try:
+        speed = float(match[0])
+
+        print("VELOCITÀ IMPOSTATA A:", speed)
+
+        # TODO: creare settings.py per controllare le impostazioni
+        # Apre il file
+        with open("settings.json", "r") as file:
+          # Carica le impostazioni dal file
+          settings = json.load(file)
+
+          # Modifica la velocità di output
+          settings['output_speed'] = speed
+
+        with open("settings.json", "w") as file:
+          # Salva le modifiche apportate
+          json.dump(settings, file, indent=2)
+        
+      except Exception as e:
+        speak("Non sono riuscito a modificare la velocità")
+        print("Exception:", e)
+
+    text = re.sub(pattern_speed, '', text)
+  return text
+  
+def open_url(text, token):
+  matches = re.findall(pattern_url, text)
+  if matches:
+    for url in matches:
+      print("Apro l'url:", url)
+      webbrowser.open(url)  # Apre l'url nel browser
+
+    text = re.sub(pattern_url, '', text)
+  return text
+
+def pause(text, token):
+  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/pause',)).start()
+  return text.replace(token, '')
+
+def resume(text, token):
+  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/resume',)).start()
+  return text.replace(token, '')
+
+def next_track(text, token):
+  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/next_track',)).start()
+  return text.replace(token, '')
+
+def prev_track(text, token):
+  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/prev_track',)).start()
+  return text.replace(token, '')
+
+def play_song(text, token):
+  matches = re.findall(pattern_play_song, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_track/' + name,)).start()
+  return text.replace(token, '')
+
+def play_album(text, token):
+  matches = re.findall(pattern_play_album, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_album/' + name,)).start()
+  return text.replace(token, '')
+
+def play_playlist(text, token):
+  matches = re.findall(pattern_play_playlist, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_playlist/' + name,)).start()
+  return text.replace(token, '')
+
+def play_artist(text, token):
+  matches = re.findall(pattern_play_artist, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_artist/' + name,)).start()
+  return text.replace(token, '')
+  
 # TODO: refactor this function
 def replace_tokens(text):
   text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
   text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash
+  
+  if '$END' in text:
+    text.replace('$END', '')
+    end = True
+  else:
+    end = False
 
   for token in tokens:
     if token in text:
-      if token == '$NEW_EVENT':
-        matches = re.findall(pattern_event, text)
-        if matches:
-          for match in matches:
-            try:
-              title = match[0]
-              date = match[1]
-              time = match[2]
-
-              event = {
-                "title": title,
-                "date": date,
-                "time": time
-              }
-              new_event(event)
-            except:
-              speak("Non sono riuscito a creare l'evento")
-
-          text = re.sub(pattern_event, '', text)
-        else:
-          speak("Non sono riuscito a creare l'evento")
-      
-      elif token == '$REMOVE_HISTORY':
-        with open("history.json", "w") as file:
-          file.write("[]")
-        text = text.replace(token, '')
-      
-      elif token == '$UPDATE':
-        local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
-        remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
-        
-        print("Local hash:  ", local)
-        print("Remote hash: ", remote)
-        
-        if local == remote:
-          speak("Non ho trovato aggiormamenti")
-        else:
-          subprocess.run(["chmod", "+x", "update.sh"])
-          subprocess.Popen(["./update.sh"])
-          
-        text = text.replace(token, '')
-        
-      elif token == '$SET_TIMER':
-        matches = re.findall(pattern_timer, text)
-        if matches:
-          for match in matches:
-            try:
-              id = int(match[0])
-              seconds = int(match[1])
-
-              if not start_timer(id, seconds):  # Imposta un timer
-                print(f"Impossibile creare due timer con lo stesso id: {id}")
-                speak("Non sono riuscito ad impostare il timer")
-
-            except ValueError:
-              speak("Non sono riuscito ad impostare il timer")
-
-          text = re.sub(pattern_timer, '', text)
-      
-      elif token == '$SET_MASTER_VOLUME':
-        matches = re.findall(pattern_volume, text)
-        if matches:
-          for match in matches:
-            try:
-              percentage = int(match)
-              set_master_volume(percentage)
-              
-            except ValueError:
-              print("Errore nell'impostazione del volume")
-          text = re.sub(pattern_volume, '', text)
-                  
-      elif token == '$GET_TIMER_REMAINING':
-        matches = re.findall(pattern_remaining, text)
-        if matches:
-          for match in matches:
-            try:
-              id = int(match)
-
-              remaining = get_remaining(id)
-              readable_time = convert_seconds_to_readable_time(remaining)
-
-            except Exception as e:
-              speak("Non sono riuscito ad ottenere informazioni sul timer")
-              print("Exception:", e)
-
-            if remaining != -1:
-              text = re.sub(pattern_remaining, readable_time, text)
-      
-      elif token == '$STOP_TIMER':
-        matches = re.findall(pattern_stop_timer, text)
-        if matches:
-          for match in matches:
-            try:
-              id = int(match)
-              pid = _get_timer_pid(id)
-
-              if pid != -1:
-                if stop_timer(id):  # Interrompe il timer
-                  print(f"Timer id:{id} pid:{pid} interrotto")
-                else:
-                  speak(f"Non ho trovato nessun timer con id {id}")
-                  print(f"Non ho trovato nessun timer con id {id}")
-              else:
-                speak("Non sono riuscito ad interrompere il timer")
-                print("Non sono riuscito ad interrompere il timer")
-            except ValueError:
-              speak("Non sono riuscito ad interrompere il timer")
-
-          text = re.sub(pattern_stop_timer, '', text)
-      
-      elif token == '$SET_SPEED':
-        matches = re.findall(pattern_speed, text)
-        if matches:
-          for match in matches:
-            try:
-              speed = float(match[0])
-
-              print("VELOCITÀ IMPOSTATA A:", speed)
-
-              # Apre il file
-              with open("settings.json", "r") as file:
-                # Carica le impostazioni dal file
-                settings = json.load(file)
-
-                # Modifica la velocità di output
-                settings['output_speed'] = speed
-
-              with open("settings.json", "w") as file:
-                # Salva le modifiche apportate
-                json.dump(settings, file, indent=2)
-              
-            except Exception as e:
-              speak("Non sono riuscito a modificare la velocità")
-              print("Exception:", e)
-
-          text = re.sub(pattern_speed, '', text)
-
-      elif token == '$OPEN_URL':
-        matches = re.findall(pattern_url, text)
-        if matches:
-          for url in matches:
-            print("Apro l'url:", url)
-            webbrowser.open(url)  # Apre l'url nel browser
-
-          text = re.sub(pattern_url, '', text)
-      
-      elif token == '$PAUSE':
-        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/pause',)).start()
-        text = text.replace(token, '')
-      
-      elif token == '$RESUME':
-        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/resume',)).start()
-        text = text.replace(token, '')
-      
-      elif token == '$NEXT_TRACK':
-        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/next_track',)).start()
-        text = text.replace(token, '')
-        
-      elif token == '$PREV_TRACK':
-        threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/prev_track',)).start()
-        text = text.replace(token, '')
+      text = tokens[token](text, token)
+  
+  if end:
+    text += '$END'
   return text
+
+tokens = {
+  '$ALARM': None,  # TODO: da implementare
+  '$SET_TIMER': set_timer,
+  '$STOP_TIMER': _stop_timer,
+  '$GET_TIMER_REMAINING': get_timer_remaining,
+  '$OPEN_URL': open_url,
+  '$SET_SPEED': set_speed,
+  '$REMOVE_HISTORY': remove_history,
+  '$UPDATE': update,
+  '$SET_MASTER_VOLUME': set_volume,
+  
+  '$PAUSE': pause,
+  '$RESUME': resume,
+  '$NEXT_TRACK': next_track,
+  '$PREV_TRACK': prev_track,
+  '$PLAY_SONG': play_song,
+  '$PLAY_ARTIST': play_artist,
+  '$PLAY_ALBUM': play_album,
+  '$PLAY_PLAYLIST': play_playlist,
+}

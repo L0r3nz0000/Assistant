@@ -64,8 +64,12 @@ if __name__ == "__main__":
   response_completed = multiprocessing.Event()
   update_available = multiprocessing.Event()
   
-  updates_thread = threading.Thread(target=fetch_updates, args=(update_available,))
-  updates_thread.start()
+  with open('settings.json', 'r') as file:
+    settings = json.load(file)
+  
+  if settings['ask_for_updates']:
+    updates_thread = threading.Thread(target=fetch_updates, args=(update_available,))
+    updates_thread.start()
   
   # Esegue il server flask per spotify connect
   subprocess.Popen(['flask', 'run'], cwd='spotify-free-api')
@@ -73,7 +77,7 @@ if __name__ == "__main__":
   # Carica il prompt system dal file
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
-  
+    
   # Loop eventi
   blocking_wake_word(conversation_open, response_completed, update_available)
   p = new_interaction(conversation_open, response_completed, update_available)

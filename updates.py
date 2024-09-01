@@ -10,13 +10,3 @@ def fetch_updates(update_available):
     if local != remote:
       update_available.set()
       break
-  
-def ask_for_updates(chat):
-  question = "Ciao, è disponibile un aggiornamento, vuoi farlo ora?"
-  speak(question)
-  
-  chat.add_to_history_as_model(question)
-  
-  # Aspetta la risposta dell'utente
-  prompt = listen_prompt()
-  return prompt#chat.send_message(prompt)

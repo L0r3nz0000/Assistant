@@ -6,10 +6,13 @@ import os
 
 class Sound:
   def __init__(self, filename, speed=1.0):
-    if os.path.exists(filename):
-      self.filename = filename
-      self.delay_process = None
-      self.speed = speed
+    if filename:
+      if os.path.exists(filename):
+        self.filename = filename
+        self.delay_process = None
+        self.speed = speed
+      else:
+        print(f"File {filename} non trovato")
     else:
       print(f"File {filename} non trovato")
   
@@ -34,9 +37,10 @@ class Sound:
     self.delayed_play(0)
   
   def play(self):
-    subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],
-      stdout=subprocess.DEVNULL,
-      stderr=subprocess.STDOUT)
+    if self.filename:
+      subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT)
   
   def stop(self):
     ok = False
