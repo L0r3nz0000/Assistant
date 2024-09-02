@@ -16,6 +16,10 @@ $PLAY_SONG name -> cerca e riproduce una canzone
 $PLAY_ARTIST name -> cerca e riproduce le canzoni più famose di un cantante
 $PLAY_PLAYLIST name -> cerca e riproduce una playlist
 $PLAY_ALBUM name -> cerca e riproduce un album
+$ADD_SONG_TO_QUEUE name -> cerca e mette in coda una canzone
+$ADD_ALBUM_TO_QUEUE name -> cerca e mette in coda un album
+$ADD_PLAYLIST_TO_QUEUE name -> cerca e mette in coda una playlist
+$ADD_ARTIST_TO_QUEUE name -> cerca e mette in coda le canzoni migliori di un artista
 $END -> termina la conversazione, per esempio "output... $END"
 Se vuoi eseguire codice puoi usare questi tag:
 per il codice python

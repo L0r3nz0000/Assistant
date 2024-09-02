@@ -13,6 +13,12 @@ import re
 
 python_interpreter = "python3"
 
+# ! pattern generati automaticamente, da testare 
+pattern_add_song_to_queue = r'\$ADD_SONG_TO_QUEUE\s+([^\n]+)'                         #   $ADD_SONG_TO_QUEUE name
+pattern_add_artist_to_queue = r'\$ADD_ARTIST_TO_QUEUE\s+([^\n]+)'                     #   $ADD_ARTIST_TO_QUEUE name
+pattern_add_album_to_queue = r'\$ADD_ALBUM_TO_QUEUE\s+([^\n]+)'                       #   $ADD_ALBUM_TO_QUEUE name
+pattern_add_playlist_to_queue = r'\$ADD_PLAYLIST_TO_QUEUE\s+([^\n]+)'                 #   $ADD_PLAYLIST_TO_QUEUE name
+
 pattern_play_artist = r'\$PLAY_ARTIST\s+([^\n]+)'                                     #   $PLAY_ARTIST name
 pattern_play_playlist = r'\$PLAY_PLAYLIST\s+([^\n]+)'                                 #   $PLAY_PLAYLIST name
 pattern_play_album = r'\$PLAY_ALBUM\s+([^\n]+)'                                       #   $PLAY_ALBUM name
@@ -239,52 +245,63 @@ def prev_track(text, token):
   threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/prev_track',)).start()
   return text.replace(token, '')
 
+
+# TODO: fare richieste con action:play e action:queue
 def play_song(text, token):
   matches = re.findall(pattern_play_song, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_track/' + name,)).start()
-  return text.replace(token, '')
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/track/' + name, {'action': 'play'})).start()
+  return re.sub(pattern_play_song, '', text)
+
+def add_song_to_queue(text, token):
+  matches = re.findall(pattern_add_song_to_queue, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/track/' + name, {'action': 'add_to_queue'})).start()
+  return re.sub(pattern_add_song_to_queue, '', text)
 
 def play_album(text, token):
   matches = re.findall(pattern_play_album, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_album/' + name,)).start()
-  return text.replace(token, '')
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/album/' + name, {'action': 'play'})).start()
+  return re.sub(pattern_play_album, '', text)
+
+def add_album_to_queue(text, token):
+  matches = re.findall(pattern_add_album_to_queue, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/album/' + name, {'action': 'add_to_queue'})).start()
+  return re.sub(pattern_add_album_to_queue, '', text)
 
 def play_playlist(text, token):
   matches = re.findall(pattern_play_playlist, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_playlist/' + name,)).start()
-  return text.replace(token, '')
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/playlist/' + name, {'action': 'play'})).start()
+  return re.sub(pattern_play_playlist, '', text)
+
+def add_playlist_to_queue(text, token):
+  matches = re.findall(pattern_add_playlist_to_queue, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/playlist/' + name, {'action': 'add_to_queue'})).start()
+  return re.sub(pattern_add_playlist_to_queue, '', text)
 
 def play_artist(text, token):
   matches = re.findall(pattern_play_artist, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/play_artist/' + name,)).start()
-  return text.replace(token, '')
-  
-# TODO: refactor this function
-def replace_tokens(text):
-  text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
-  text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash
-  
-  if '$END' in text:
-    text.replace('$END', '')
-    end = True
-  else:
-    end = False
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/artist/' + name, {'action': 'play'})).start()
+  return re.sub(pattern_play_artist, '', text)
 
-  for token in tokens:
-    if token in text:
-      text = tokens[token](text, token)
-  
-  if end:
-    text += '$END'
-  return text
+def add_artist_to_queue(text, token):
+  matches = re.findall(pattern_add_artist_to_queue, text)
+
+  for name in matches:
+    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/artist/' + name, {'action': 'add_to_queue'})).start()
+  return re.sub(pattern_add_artist_to_queue, '', text)
 
 tokens = {
   '$ALARM': None,  # TODO: da implementare
@@ -305,4 +322,26 @@ tokens = {
   '$PLAY_ARTIST': play_artist,
   '$PLAY_ALBUM': play_album,
   '$PLAY_PLAYLIST': play_playlist,
+  '$ADD_SONG_TO_QUEUE': add_song_to_queue,
+  '$ADD_ALBUM_TO_QUEUE': add_album_to_queue,
+  '$ADD_PLAYLIST_TO_QUEUE': add_playlist_to_queue,
+  '$ADD_ARTIST_TO_QUEUE': add_artist_to_queue
 }
+
+def replace_tokens(text):
+  text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
+  text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash
+  
+  if '$END' in text:
+    text = text.replace('$END', '')
+    end = True
+  else:
+    end = False
+
+  for token in tokens:
+    if token in text:
+      text = tokens[token](text, token)
+  
+  if end:
+    text += '$END'
+  return text
