@@ -28,7 +28,7 @@ def _text_to_audio(text, voice):
   r = requests.post(url, json=json)
 
   if "audioStream" not in r.json():
-    return
+    return None
   
   audioStream_b64 = r.json()['audioStream']
 
@@ -42,21 +42,24 @@ def _text_to_audio(text, voice):
   return output_file_name
 
 def speak(text, voice="fiamma"):
-  filename = _text_to_audio(text, voice)
+  text = text.strip()  # Elimina gli spazi inutili
+  if text:
+    filename = _text_to_audio(text, voice)
 
-  with open("settings.json", "r") as file:
-    settings = json.load(file)
+    if filename:
+      with open("settings.json", "r") as file:
+        settings = json.load(file)
 
-  # Ottiene la lista delle app che stanno riproducendo audio
-  active_sinks = volume_controller.get_playing_audio_apps()
+      # Ottiene la lista delle app che stanno riproducendo audio
+      active_sinks = volume_controller.get_playing_audio_apps()
 
-  # Abbassa il volume di tutte le app attive
-  for sink_id in active_sinks:
-    volume_controller.set_volume(sink_id, settings['volume_decrease'])
+      # Abbassa il volume di tutte le app attive
+      for sink_id in active_sinks:
+        volume_controller.set_volume(sink_id, settings['volume_decrease'])
 
-  s = Sound(filename, speed=settings['output_speed'])
-  s.play()
+      s = Sound(filename, speed=settings['output_speed'])
+      s.play()
 
-  # Riporta il volume delle app attive al valore iniziale
-  for sink_id in active_sinks:
-    volume_controller.set_volume(sink_id, 100)
+      # Riporta il volume delle app attive al valore iniziale
+      for sink_id in active_sinks:
+        volume_controller.set_volume(sink_id, 100)

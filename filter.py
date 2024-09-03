@@ -229,81 +229,121 @@ def open_url(text, token):
     text = re.sub(pattern_url, '', text)
   return text
 
+def async_post(url, data=None, params=None):
+  kwargs = {
+    'url': url,
+    'params': params,
+    'data': data
+  }
+  
+  request = threading.Thread(target=requests.post, kwargs=kwargs)
+  request.start()
+  
 def pause(text, token):
-  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/pause',)).start()
+  async_post('http://127.0.0.1:5000/pause')
   return text.replace(token, '')
 
 def resume(text, token):
-  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/resume',)).start()
+  async_post('http://127.0.0.1:5000/resume')
   return text.replace(token, '')
 
 def next_track(text, token):
-  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/next_track',)).start()
+  async_post('http://127.0.0.1:5000/next_track')
   return text.replace(token, '')
 
 def prev_track(text, token):
-  threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/prev_track',)).start()
+  async_post('http://127.0.0.1:5000/prev_track')
   return text.replace(token, '')
 
-
-# TODO: fare richieste con action:play e action:queue
 def play_song(text, token):
   matches = re.findall(pattern_play_song, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/track/' + name, {'action': 'play'})).start()
+    params = {
+      'action': 'play',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/track', params=params)
   return re.sub(pattern_play_song, '', text)
 
 def add_song_to_queue(text, token):
   matches = re.findall(pattern_add_song_to_queue, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/track/' + name, {'action': 'add_to_queue'})).start()
+    params = {
+      'action': 'add_to_queue',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/track', params=params)
   return re.sub(pattern_add_song_to_queue, '', text)
 
 def play_album(text, token):
   matches = re.findall(pattern_play_album, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/album/' + name, {'action': 'play'})).start()
+    params = {
+      'action': 'play',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/album', params=params)
   return re.sub(pattern_play_album, '', text)
 
 def add_album_to_queue(text, token):
   matches = re.findall(pattern_add_album_to_queue, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/album/' + name, {'action': 'add_to_queue'})).start()
+    params = {
+      'action': 'add_to_queue',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/album', params=params)
   return re.sub(pattern_add_album_to_queue, '', text)
 
 def play_playlist(text, token):
   matches = re.findall(pattern_play_playlist, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/playlist/' + name, {'action': 'play'})).start()
+    params = {
+      'action': 'play',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/playlist', params=params)
   return re.sub(pattern_play_playlist, '', text)
 
 def add_playlist_to_queue(text, token):
   matches = re.findall(pattern_add_playlist_to_queue, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/playlist/' + name, {'action': 'add_to_queue'})).start()
+    params = {
+      'action': 'add_to_queue',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/playlist', params=params)
   return re.sub(pattern_add_playlist_to_queue, '', text)
 
 def play_artist(text, token):
   matches = re.findall(pattern_play_artist, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/artist/' + name, {'action': 'play'})).start()
+    params = {
+      'action': 'play',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/artist', params=params)
   return re.sub(pattern_play_artist, '', text)
 
 def add_artist_to_queue(text, token):
   matches = re.findall(pattern_add_artist_to_queue, text)
 
   for name in matches:
-    threading.Thread(target=requests.post, args=('http://127.0.0.1:5000/artist/' + name, {'action': 'add_to_queue'})).start()
+    params = {
+      'action': 'add_to_queue',
+      'query': name
+    }
+    async_post('http://127.0.0.1:5000/artist', params=params)
   return re.sub(pattern_add_artist_to_queue, '', text)
 
-tokens = {
+functions = {
   '$ALARM': None,  # TODO: da implementare
   '$SET_TIMER': set_timer,
   '$STOP_TIMER': _stop_timer,
@@ -328,6 +368,9 @@ tokens = {
   '$ADD_ARTIST_TO_QUEUE': add_artist_to_queue
 }
 
+# TODO: "metti like a questa canzone"
+# TODO: "che canzone è questa??"
+
 def replace_tokens(text):
   text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
   text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash
@@ -338,9 +381,9 @@ def replace_tokens(text):
   else:
     end = False
 
-  for token in tokens:
+  for token in functions:
     if token in text:
-      text = tokens[token](text, token)
+      text = functions[token](text, token)
   
   if end:
     text += '$END'
