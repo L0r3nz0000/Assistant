@@ -22,6 +22,11 @@ pip install -r requirements.txt
 read -s -p "Inserisci il token api di replicate: " API_TOKEN
 echo ""
 
+cd spotify-free-api
+chmod +x install.sh
+./install.sh
+cd ..
+
 echo "[Unit]
 Description=Assistente vocale
 After=network.target

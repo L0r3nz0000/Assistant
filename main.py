@@ -71,7 +71,7 @@ if __name__ == "__main__":
     updates_thread.start()
   
   # Esegue il server flask per spotify connect
-  subprocess.Popen(['flask', 'run'], cwd='spotify-free-api')
+  subprocess.Popen([".env/bin/python3", "-m", "flask", "run"], cwd='spotify-free-api')
 
   # Carica il prompt system dal file
   with open("system_prompt.txt", "r") as file:
