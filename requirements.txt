@@ -4,7 +4,6 @@ pydub
 requests
 replicate
 speechrecognition
-playsound
 psutil
 markdown2
 beautifulsoup4

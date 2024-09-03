@@ -2,7 +2,6 @@ from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
 from stt import listen_prompt
-from sound import Sound
 import multiprocessing
 from time import time
 from tts import speak

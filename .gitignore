@@ -3,4 +3,5 @@ sounds/output.mp3
 .venv
 __pycache__
 .lprof
-history.jsonspotify-free-api
+history.json
+spotify-free-api
