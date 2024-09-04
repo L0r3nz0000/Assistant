@@ -1,74 +1,56 @@
 [
   {
     "role": "user",
-    "message": "quanta pasta mangiano pi\u00f9 o meno 3 persone",
-    "timestamp": "Timestamp: 03/09/2024 14:00"
+    "message": "Riproduci This is d12 da Spotify",
+    "timestamp": "Timestamp: 04/09/2024 16:19"
   },
   {
     "role": "model",
-    "message": "\n\nUna domanda molto italiana!\n\nLa quantit\u00e0 di pasta che mangiano 3 persone pu\u00f2 variare in base alle porzioni e alle preferenze individuali. Tuttavia, una regola generale \u00e8 di calcolare circa 80-100 grammi di pasta secca per persona.\n\nQuindi, per 3 persone, potremmo stimare una quantit\u00e0 di pasta secca di circa 240-300 grammi.\n\nTieni presente che questa \u00e8 solo una stima e che la quantit\u00e0 effettiva pu\u00f2 variare in base alle esigenze e alle abitudini alimentari delle persone coinvolte.\n\nSpero che questo ti sia stato utile! $END"
+    "message": "\n\nSto riproducendo \"This Is D12\" su Spotify $PLAY_SONG This is D12 $END"
   },
   {
     "role": "user",
-    "message": "Avvia un timer di 4 minuti e uno di 8",
-    "timestamp": "Timestamp: 03/09/2024 14:03"
+    "message": "prossima canzone",
+    "timestamp": "Timestamp: 04/09/2024 16:19"
   },
   {
     "role": "model",
-    "message": "\n\nHo impostato due timer per te!\n\nIl primo timer, con id 0, \u00e8 stato impostato per 4 minuti. $SET_TIMER 0 240\n\nIl secondo timer, con id 1, \u00e8 stato impostato per 8 minuti. $SET_TIMER 1 480\n\nSpero che questi timer ti siano utili! $END"
+    "message": "\n\nSto passando alla traccia successiva su Spotify $NEXT_TRACK $END"
   },
   {
     "role": "user",
-    "message": "Quanto manca a tutti e due i timer",
-    "timestamp": "Timestamp: 03/09/2024 14:03"
+    "message": "Riproduci la playlist This is di 12 da Spotify",
+    "timestamp": "Timestamp: 04/09/2024 16:20"
   },
   {
     "role": "model",
-    "message": "\n\nEcco il tempo rimanente per entrambi i timer!\n\nAl tuo timer di 4 minuti, con id 0, mancano $GET_TIMER_REMAINING 0.\n\nAl tuo timer di 8 minuti, con id 1, mancano $GET_TIMER_REMAINING 1.\n\nSpero che questo ti sia stato utile! $END"
+    "message": "\n\nSto riproducendo la playlist \"This Is D12\" su Spotify $PLAY_PLAYLIST This is D12 $END"
   },
   {
     "role": "user",
-    "message": "interrompi il timer",
-    "timestamp": "Timestamp: 03/09/2024 14:07"
+    "message": "metti in coda Till I Collapse di Eminem",
+    "timestamp": "Timestamp: 04/09/2024 17:20"
   },
   {
     "role": "model",
-    "message": "\n\nHo interrotto entrambi i timer!\n\nHo interrotto il timer di 4 minuti, con id 0. $STOP_TIMER 0\n\nHo interrotto il timer di 8 minuti, con id 1. $STOP_TIMER 1\n\nI timer non sono pi\u00f9 attivi. $END"
-  },
-  {
-    "role": "user",
-    "message": "riprendi la musica",
-    "timestamp": "Timestamp: 03/09/2024 14:10"
-  },
-  {
-    "role": "model",
-    "message": "\n\nLa musica riprende!\n\n$RESUME\n\nSpero che la tua giornata sia accompagnata dalla musica che ami! $END"
+    "message": "\n\n\n\nSto aggiungendo \"Till I Collapse\" di Eminem alla coda su Spotify $ADD_SONG_TO_QUEUE Till I Collapse $END"
   },
   {
     "role": "user",
     "message": "pausa",
-    "timestamp": "Timestamp: 03/09/2024 14:59"
+    "timestamp": "Timestamp: 04/09/2024 17:25"
   },
   {
     "role": "model",
-    "message": "\n\n\n\nLa musica \u00e8 in pausa!\n\n$PAUSE\n\nSpero che tu possa riprendere la tua giornata quando sarai pronto! $END"
+    "message": "\n\n\n\nHo messo in pausa la musica su Spotify $PAUSE $END"
   },
   {
     "role": "user",
-    "message": "Consigliami qualche canzone rock classica",
-    "timestamp": "Timestamp: 03/09/2024 15:00"
+    "message": "Riproduci Till I Collapse di Eminem",
+    "timestamp": "Timestamp: 04/09/2024 17:26"
   },
   {
     "role": "model",
-    "message": "\n\nEcco alcuni classici del rock che ti consiglio!\n\n1. \"Stairway to Heaven\" dei Led Zeppelin\n2. \"Hotel California\" degli Eagles\n3. \"Sweet Child O' Mine\" dei Guns N' Roses\n4. \"Back in Black\" degli AC/DC\n5. \"Bohemian Rhapsody\" dei Queen\n\nSpero che questi suggerimenti ti siano stati utili! Vuoi che ti riproduca una di queste canzoni?\n\n(Nota: se vuoi riprodurre una canzone, posso usarli tag $PLAY_SONG) $END"
-  },
-  {
-    "role": "user",
-    "message": "metti delle canzoni dei Guns n' Roses",
-    "timestamp": "Timestamp: 03/09/2024 15:01"
-  },
-  {
-    "role": "model",
-    "message": "\n\nEcco!\n\nSto riproducendo le canzoni dei Guns N' Roses!\n\n$PLAY_ARTIST Guns N' Roses\n\nSpero che ti godi le loro hit come \"Sweet Child O' Mine\", \"November Rain\", \"Paradise City\" e molte altre!\n\n$END"
+    "message": "\n\n\n\n\n\nSto riproducendo \"Till I Collapse\" di Eminem su Spotify $PLAY_SONG Till I Collapse $END"
   }
 ]

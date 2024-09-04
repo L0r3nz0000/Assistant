@@ -8,6 +8,8 @@ $SET_SPEED speed -> imposta la velocità dell'output vocale (default 1.1), per e
 $REMOVE_HISTORY -> elimina la cronologia della chat
 $UPDATE -> esegue l'aggiornamento del software dell'assistente, per esempio "$UPDATE Sto facendo gli aggiornamenti $END"
 $SET_MASTER_VOLUME percentage -> imposta il master volume in precentuale
+
+i tag che funzionano con spotify vanno messi alla fine della risposta
 $PAUSE -> mette in pausa la musica da spotify
 $RESUME -> riprende la riproduzione della musica da spotify
 $NEXT_TRACK -> salta alla traccia successiva
