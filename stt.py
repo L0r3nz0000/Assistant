@@ -5,8 +5,12 @@ import volume_controller
 from sound import Sound
 from time import time
 import replicate
+import threading
 import requests
 import json
+
+from Koala.Koala import process_audio_with_koala
+from Koala.Koala import async_instantiate_koala
 
 
 def save_audio_to_mp3(audio: sr.AudioData, output_path: str):
@@ -70,7 +74,7 @@ def transcribe_incredibly_fast_whisper(audio: sr.AudioData):
   else:
     return 
 
-def listen_prompt(timeout=8):
+def listen_prompt(timeout=8, stt_backend='google', remove_noise=True):
   # Ottiene la lista delle app che stanno riproducendo audio
   active_sinks = volume_controller.get_playing_audio_apps()
 
@@ -88,6 +92,12 @@ def listen_prompt(timeout=8):
   # Riproduce il suono di attivazione
   s = Sound("sounds/active.mp3")
   s.async_play()
+  
+  if remove_noise:
+    print("Sto creando un thread per istanziare Koala...")
+    koala_ready = threading.Event()
+    koala = [None]
+    threading.Thread(target=async_instantiate_koala, args=(koala, koala_ready)).start()
 
   # Ridireziona lo stderr a /dev/null
   old_stderr = suppress_stderr()
@@ -108,17 +118,20 @@ def listen_prompt(timeout=8):
         volume_controller.set_volume(sink_id, 100)
 
       try:
-        # print("Whisper sta elaborando il messaggio...")
-        # start = time()
+        if stt_backend.lower() == 'whisper':
+          print("Whisper sta elaborando il messaggio...")
+          start = time()
+          
+          text = transcribe_incredibly_fast_whisper(audio)
+          print(f"[{time() - start:.2f}s] Messaggio elaborato con whisper")
+          
+        elif stt_backend.lower() == 'google':
+          print("Google sta elaborando il messaggio...")
+          start = time()
+          
+          text = r.recognize_google(audio, language="it-IT")
+          print(f"[{time() - start:.2f}s] Messaggio elaborato con google")
         
-        # text = transcribe_incredibly_fast_whisper(audio)
-        # print(f"[{time() - start:.2f}s] Messaggio elaborato con whisper")
-        
-        print("Google sta elaborando il messaggio...")
-        start = time()
-        
-        text = r.recognize_google(audio, language="it-IT")
-        print(f"[{time() - start:.2f}s] Messaggio elaborato con google")
       except Exception as e:
         print("Exception:", e)
     except sr.exceptions.WaitTimeoutError:

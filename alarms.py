@@ -7,6 +7,8 @@ import signal
 import json
 import os
 
+#TODO: testare queste funzioni
+
 file_path = 'alarms.json'
 
 def _search_alarm(alarms, time):
@@ -67,7 +69,7 @@ def start_alarm(time, repeats):
 
   print(f"Nuovo timer impostato id:{id} pid:{pid}")
 
-  save_timer({
+  save_alarm({
     "time": time,
     "pid": pid,
     "repeats": repeats
@@ -95,7 +97,7 @@ def stop_alarm(time):
       try:
         kill_process_and_children(pid)
       except ProcessLookupError:
-        print("Il timer non è stato trovato, forse era già scaduto?")
+        print("la sveglia non è stata trovata, forse era già scaduto?")
       
       return True
   return False
@@ -109,13 +111,13 @@ def get_remaining(id):
   return -1
 
 
-# TODO: capire che cazzo succede in questa funzione
-def save_timer(alarm):
+def save_alarm(alarm):
   alarms = _load_alarms(file_path)
+  time = alarm['time']
   
-  i = _search_alarms(alarms, time)
+  i = _search_alarm(alarms, time)
   if i != -1:
-    print("Impossibile creare due timer con lo stesso id")
+    print("Impossibile creare due sveglie alla stessa ora")
     return
   alarms.append(alarm)
   

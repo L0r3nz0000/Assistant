@@ -1,56 +1,11 @@
 [
   {
     "role": "user",
-    "message": "Riproduci This is d12 da Spotify",
-    "timestamp": "Timestamp: 04/09/2024 16:19"
+    "message": "Sara ha 7 Lama la sua amica le regala altri tre camion di Lama ogni camion ha cinque Lama quanti",
+    "timestamp": "Timestamp: 05/09/2024 00:11"
   },
   {
     "role": "model",
-    "message": "\n\nSto riproducendo \"This Is D12\" su Spotify $PLAY_SONG This is D12 $END"
-  },
-  {
-    "role": "user",
-    "message": "prossima canzone",
-    "timestamp": "Timestamp: 04/09/2024 16:19"
-  },
-  {
-    "role": "model",
-    "message": "\n\nSto passando alla traccia successiva su Spotify $NEXT_TRACK $END"
-  },
-  {
-    "role": "user",
-    "message": "Riproduci la playlist This is di 12 da Spotify",
-    "timestamp": "Timestamp: 04/09/2024 16:20"
-  },
-  {
-    "role": "model",
-    "message": "\n\nSto riproducendo la playlist \"This Is D12\" su Spotify $PLAY_PLAYLIST This is D12 $END"
-  },
-  {
-    "role": "user",
-    "message": "metti in coda Till I Collapse di Eminem",
-    "timestamp": "Timestamp: 04/09/2024 17:20"
-  },
-  {
-    "role": "model",
-    "message": "\n\n\n\nSto aggiungendo \"Till I Collapse\" di Eminem alla coda su Spotify $ADD_SONG_TO_QUEUE Till I Collapse $END"
-  },
-  {
-    "role": "user",
-    "message": "pausa",
-    "timestamp": "Timestamp: 04/09/2024 17:25"
-  },
-  {
-    "role": "model",
-    "message": "\n\n\n\nHo messo in pausa la musica su Spotify $PAUSE $END"
-  },
-  {
-    "role": "user",
-    "message": "Riproduci Till I Collapse di Eminem",
-    "timestamp": "Timestamp: 04/09/2024 17:26"
-  },
-  {
-    "role": "model",
-    "message": "\n\n\n\n\n\nSto riproducendo \"Till I Collapse\" di Eminem su Spotify $PLAY_SONG Till I Collapse $END"
+    "message": "\n\nSara ha inizialmente 7 Lama. La sua amica le regala 3 camion di Lama, ognuno con 5 Lama. Quindi, Sara riceve 3 x 5 = 15 Lama in pi\u00f9. In totale, Sara avr\u00e0 7 + 15 = 22 Lama. $END"
   }
 ]

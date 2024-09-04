@@ -13,12 +13,11 @@ import re
 
 python_interpreter = "python3"
 
-# ! pattern generati automaticamente, da testare 
+# TODO: scrivere una regex per $SET_ALARM
 pattern_add_song_to_queue = r'\$ADD_SONG_TO_QUEUE\s+([^\n]+)'                         #   $ADD_SONG_TO_QUEUE name
 pattern_add_artist_to_queue = r'\$ADD_ARTIST_TO_QUEUE\s+([^\n]+)'                     #   $ADD_ARTIST_TO_QUEUE name
 pattern_add_album_to_queue = r'\$ADD_ALBUM_TO_QUEUE\s+([^\n]+)'                       #   $ADD_ALBUM_TO_QUEUE name
 pattern_add_playlist_to_queue = r'\$ADD_PLAYLIST_TO_QUEUE\s+([^\n]+)'                 #   $ADD_PLAYLIST_TO_QUEUE name
-
 pattern_play_artist = r'\$PLAY_ARTIST\s+([^\n]+)'                                     #   $PLAY_ARTIST name
 pattern_play_playlist = r'\$PLAY_PLAYLIST\s+([^\n]+)'                                 #   $PLAY_PLAYLIST name
 pattern_play_album = r'\$PLAY_ALBUM\s+([^\n]+)'                                       #   $PLAY_ALBUM name
@@ -34,8 +33,7 @@ pattern_bash = r'```bash(.*?)```'                                               
 pattern_event = r'\$NEW_EVENT\s+(\S+)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{1,2})'  #   $NEW_EVENT titolo dd/mm/yyyy hh:mm
 
 def execute(command):
-  timer_thread = threading.Thread(target=subprocess.run, args=(command.split(),))
-  timer_thread.start()
+  threading.Thread(target=subprocess.run, args=(command.split(),)).start()
 
 def execute_and_remove_python_tags(text, remove=False):
   # Estrai tutto il contenuto tra i tag python
@@ -343,8 +341,14 @@ def add_artist_to_queue(text, token):
     async_post('http://127.0.0.1:5000/artist', params=params)
   return re.sub(pattern_add_artist_to_queue, '', text)
 
+# TODO: implementare la funzione per settare la sveglia
+
+
+
+# TODO: dividere le funzioni in più file per semplificare la lettura del codice
+
 functions = {
-  '$ALARM': None,  # TODO: da implementare
+  '$SET_ALARM': None,  # TODO: da implementare
   '$SET_TIMER': set_timer,
   '$STOP_TIMER': _stop_timer,
   '$GET_TIMER_REMAINING': get_timer_remaining,
@@ -368,8 +372,9 @@ functions = {
   '$ADD_ARTIST_TO_QUEUE': add_artist_to_queue
 }
 
-# TODO: "metti like a questa canzone"
-# TODO: "che canzone è questa??"
+# TODO: aggiungere queste funzioni:
+# "metti like a questa canzone"
+# "che canzone è questa??"
 
 def replace_tokens(text):
   text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python

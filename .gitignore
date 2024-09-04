@@ -5,3 +5,5 @@ __pycache__
 .lprof
 history.json
 spotify-free-api
+Koala
+scripts/*
