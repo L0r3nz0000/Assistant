@@ -9,6 +9,13 @@ $SET_SPEED speed -> imposta la velocità dell'output vocale (default 1.1), per e
 $REMOVE_HISTORY -> elimina la cronologia della chat
 $UPDATE -> esegue l'aggiornamento del software dell'assistente, per esempio "$UPDATE Sto facendo gli aggiornamenti $END"
 $SET_MASTER_VOLUME percentage -> imposta il master volume in precentuale
+$TURN_ON_DEVICE device_id -> accende un dispositivo smart, per esempio "Ho acceso la luce $TURN_ON_DEVICE 1 $END"
+$TURN_OFF_DEVICE device_id -> spegne un dispositivo smart, per esempio "Ho spento la luce $TURN_OFF_DEVICE 1 $END"
+lista dispositivi smart:
+[{
+  'name': 'luce',
+  'id':   0
+}]
 
 i tag che funzionano con spotify vanno messi alla fine della risposta
 $PAUSE -> mette in pausa la musica da spotify

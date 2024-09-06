@@ -25,5 +25,176 @@
   {
     "role": "model",
     "message": "\n\nS\u00ec, certo! $SET_SPEED 1.5 Ora parler\u00f2 pi\u00f9 velocemente $END"
+  },
+  {
+    "role": "user",
+    "message": "metti Back in black da Spotify",
+    "timestamp": "Timestamp: 06/09/2024 14:23"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n Sto riproducendo \"Back in Black\" di AC/DC su Spotify $PLAY_SONG Back in Black $END"
+  },
+  {
+    "role": "user",
+    "message": "Imposta la velocit\u00e0 ad 1 punto 1",
+    "timestamp": "Timestamp: 06/09/2024 14:24"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\nOk, ho reimpostato la velocit\u00e0 del mio output vocale a 1.1 $SET_SPEED 1.1 $END"
+  },
+  {
+    "role": "user",
+    "message": "pausa",
+    "timestamp": "Timestamp: 06/09/2024 14:27"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\nHo messo in pausa la musica $PAUSE $END"
+  },
+  {
+    "role": "user",
+    "message": "Riproduci Killer Queen",
+    "timestamp": "Timestamp: 06/09/2024 14:28"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n Sto riproducendo \"Killer Queen\" dei Queen su Spotify $PLAY_SONG Killer Queen $END"
+  },
+  {
+    "role": "user",
+    "message": "Riproduci I want it all",
+    "timestamp": "Timestamp: 06/09/2024 14:31"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n Sto riproducendo \"I Want It All\" dei Queen su Spotify $PLAY_SONG I Want It All $END"
+  },
+  {
+    "role": "user",
+    "message": "metti Don't Stop Me Now dei Queen",
+    "timestamp": "Timestamp: 06/09/2024 14:47"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\n Sto riproducendo \"Don't Stop Me Now\" dei Queen su Spotify $PLAY_SONG Don't Stop Me Now $END"
+  },
+  {
+    "role": "user",
+    "message": "Riproduci Imagine di John Lennon",
+    "timestamp": "Timestamp: 06/09/2024 14:50"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n Sto riproducendo \"Imagine\" di John Lennon su Spotify $PLAY_SONG Imagine $END"
+  },
+  {
+    "role": "user",
+    "message": "skippa la canzone",
+    "timestamp": "Timestamp: 06/09/2024 14:57"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n Sto saltando alla traccia successiva $NEXT_TRACK $END"
+  },
+  {
+    "role": "user",
+    "message": "Accendi la luce",
+    "timestamp": "Timestamp: 06/09/2024 15:08"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\nHo acceso la luce $TURN_ON_DEVICE 0 $END"
+  },
+  {
+    "role": "user",
+    "message": "Accendi la luce",
+    "timestamp": "Timestamp: 06/09/2024 15:10"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n La luce \u00e8 gi\u00e0 accesa $END"
+  },
+  {
+    "role": "user",
+    "message": "Spegni la luce",
+    "timestamp": "Timestamp: 06/09/2024 15:10"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\nHo spento la luce $TURN_OFF_DEVICE 0 $END"
+  },
+  {
+    "role": "user",
+    "message": "Accendi la luce",
+    "timestamp": "Timestamp: 06/09/2024 15:11"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\nHo acceso la luce $TURN_ON_DEVICE 0 $END"
+  },
+  {
+    "role": "user",
+    "message": "Spegni la luce",
+    "timestamp": "Timestamp: 06/09/2024 15:11"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\nHo spento la luce $TURN_OFF_DEVICE 0 $END"
+  },
+  {
+    "role": "user",
+    "message": "metti un po' di musica soft rock",
+    "timestamp": "Timestamp: 06/09/2024 16:22"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n Sto riproducendo una playlist di soft rock su Spotify $PLAY_PLAYLIST Soft Rock Classics $END"
+  },
+  {
+    "role": "user",
+    "message": "metti del rock alternativo",
+    "timestamp": "Timestamp: 06/09/2024 16:23"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\n Sto riproducendo una playlist di rock alternativo su Spotify $PLAY_PLAYLIST Alternative Rock Anthems $END"
+  },
+  {
+    "role": "user",
+    "message": "Metti musica sinta",
+    "timestamp": "Timestamp: 06/09/2024 16:24"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n Sto riproducendo una playlist di musica sintetica su Spotify $PLAY_PLAYLIST Synthwave Classics $END"
+  },
+  {
+    "role": "user",
+    "message": "volume A 140",
+    "timestamp": "Timestamp: 06/09/2024 16:24"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\nHo impostato il master volume al 140% $SET_MASTER_VOLUME 140 $END"
+  },
+  {
+    "role": "user",
+    "message": "Imposta il volume A 140",
+    "timestamp": "Timestamp: 06/09/2024 16:25"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\nHo impostato il master volume al 140% $SET_MASTER_VOLUME 140 $END"
+  },
+  {
+    "role": "user",
+    "message": "Metti musica di The Notorious b.i.g.",
+    "timestamp": "Timestamp: 06/09/2024 16:25"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\n Sto riproducendo le canzoni pi\u00f9 famose di The Notorious B.I.G. su Spotify $PLAY_ARTIST The Notorious B.I.G. $END"
   }
 ]

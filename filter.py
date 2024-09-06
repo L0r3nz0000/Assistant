@@ -14,6 +14,8 @@ import re
 python_interpreter = "python3"
 
 # TODO: scrivere una regex per $SET_ALARM
+pattern_turn_on = r'\$TURN_ON_DEVICE\s+(\d+)'                                         #   $TURN_ON device_id
+pattern_turn_off = r'\$TURN_OFF_DEVICE\s+(\d+)'                                       #   $TURN_OFF device_id
 pattern_add_song_to_queue = r'\$ADD_SONG_TO_QUEUE\s+([^\n]+)'                         #   $ADD_SONG_TO_QUEUE name
 pattern_add_artist_to_queue = r'\$ADD_ARTIST_TO_QUEUE\s+([^\n]+)'                     #   $ADD_ARTIST_TO_QUEUE name
 pattern_add_album_to_queue = r'\$ADD_ALBUM_TO_QUEUE\s+([^\n]+)'                       #   $ADD_ALBUM_TO_QUEUE name
@@ -341,6 +343,20 @@ def add_artist_to_queue(text, token):
     async_post('http://127.0.0.1:5000/artist', params=params)
   return re.sub(pattern_add_artist_to_queue, '', text)
 
+def turn_on(text, token):
+  matches = re.findall(pattern_turn_on, text)
+
+  for id in matches:
+    async_post('http://192.168.1.124/power_on')
+  return re.sub(pattern_turn_on, '', text)
+
+def turn_off(text, token):
+  matches = re.findall(pattern_turn_off, text)
+
+  for id in matches:
+    async_post('http://192.168.1.124/power_off')
+  return re.sub(pattern_turn_off, '', text)
+
 # TODO: implementare la funzione per settare la sveglia
 
 
@@ -357,6 +373,8 @@ functions = {
   '$REMOVE_HISTORY': remove_history,
   '$UPDATE': update,
   '$SET_MASTER_VOLUME': set_volume,
+  '$TURN_ON_DEVICE': turn_on,
+  '$TURN_OFF_DEVICE': turn_off,
   
   '$PAUSE': pause,
   '$RESUME': resume,
