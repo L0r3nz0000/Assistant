@@ -1,11 +1,29 @@
 [
   {
     "role": "user",
-    "message": "Sara ha 7 Lama la sua amica le regala altri tre camion di Lama ogni camion ha cinque Lama quanti",
-    "timestamp": "Timestamp: 05/09/2024 00:11"
+    "message": "riprendi l'ascolto",
+    "timestamp": "Timestamp: 06/09/2024 12:36"
   },
   {
     "role": "model",
-    "message": "\n\nSara ha inizialmente 7 Lama. La sua amica le regala 3 camion di Lama, ognuno con 5 Lama. Quindi, Sara riceve 3 x 5 = 15 Lama in pi\u00f9. In totale, Sara avr\u00e0 7 + 15 = 22 Lama. $END"
+    "message": "\n\n$RESUME $END"
+  },
+  {
+    "role": "user",
+    "message": "pausa",
+    "timestamp": "Timestamp: 06/09/2024 12:37"
+  },
+  {
+    "role": "model",
+    "message": "\n\nHo messo in pausa la musica $PAUSE $END"
+  },
+  {
+    "role": "user",
+    "message": "puoi parlare al 1.5",
+    "timestamp": "Timestamp: 06/09/2024 12:38"
+  },
+  {
+    "role": "model",
+    "message": "\n\nS\u00ec, certo! $SET_SPEED 1.5 Ora parler\u00f2 pi\u00f9 velocemente $END"
   }
 ]

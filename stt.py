@@ -9,10 +9,6 @@ import threading
 import requests
 import json
 
-from Koala.Koala import process_audio_with_koala
-from Koala.Koala import async_instantiate_koala
-
-
 def save_audio_to_mp3(audio: sr.AudioData, output_path: str):
   # Ottieni i dati audio grezzi dall'oggetto AudioData
   raw_data = audio.get_raw_data()
@@ -92,12 +88,6 @@ def listen_prompt(timeout=8, stt_backend='google', remove_noise=True):
   # Riproduce il suono di attivazione
   s = Sound("sounds/active.mp3")
   s.async_play()
-  
-  if remove_noise:
-    print("Sto creando un thread per istanziare Koala...")
-    koala_ready = threading.Event()
-    koala = [None]
-    threading.Thread(target=async_instantiate_koala, args=(koala, koala_ready)).start()
 
   # Ridireziona lo stderr a /dev/null
   old_stderr = suppress_stderr()
