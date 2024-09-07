@@ -3,8 +3,8 @@
 
 #define rele 5
 
-const char* ssid = "Home&Life SuperWiFi-FBAD";
-const char* password = "Mostarda007";
+const char* ssid = "Lorenzo";
+const char* password = "bohunapassword";
 
 WebServer server(80);
 
