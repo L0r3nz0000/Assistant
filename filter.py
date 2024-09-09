@@ -1,7 +1,9 @@
 from timer import start_timer, stop_timer, _get_timer_pid, get_remaining
 from readable_time import convert_seconds_to_readable_time
 from volume_controller import set_master_volume
+from alarm import start_alarm
 from events import new_event
+from magic_paket import send_wake_on_lan
 from tts import speak
 import webbrowser
 import subprocess
@@ -13,7 +15,7 @@ import re
 
 python_interpreter = "python3"
 
-# TODO: scrivere una regex per $SET_ALARM
+pattern_alarm = r'\$SET_ALARM\s+(\d{1,2}:\d{1,2})\s+(true|false)'                     #   $SET_ALARM hh:mm repeats
 pattern_turn_on = r'\$TURN_ON_DEVICE\s+(\d+)'                                         #   $TURN_ON device_id
 pattern_turn_off = r'\$TURN_OFF_DEVICE\s+(\d+)'                                       #   $TURN_OFF device_id
 pattern_add_song_to_queue = r'\$ADD_SONG_TO_QUEUE\s+([^\n]+)'                         #   $ADD_SONG_TO_QUEUE name
@@ -347,7 +349,10 @@ def turn_on(text, token):
   matches = re.findall(pattern_turn_on, text)
 
   for id in matches:
-    async_post('http://192.168.1.124/power_on')
+    if id == '0':
+      async_post('http://192.168.1.124/power_on')
+    elif id == '1':
+      send_wake_on_lan('04:42:1A:E9:91:0D')
   return re.sub(pattern_turn_on, '', text)
 
 def turn_off(text, token):
@@ -357,14 +362,20 @@ def turn_off(text, token):
     async_post('http://192.168.1.124/power_off')
   return re.sub(pattern_turn_off, '', text)
 
-# TODO: implementare la funzione per settare la sveglia
+def set_alarm(text, token):
+  matches = re.findall(pattern_alarm, text)
+  
+  for match in matches:
+    time = match[0]
+    repeats = match[1] == 'true'
 
-
+    start_alarm(time, repeats)
+  return re.sub(pattern_alarm, '', text)
 
 # TODO: dividere le funzioni in più file per semplificare la lettura del codice
 
 functions = {
-  '$SET_ALARM': None,  # TODO: da implementare
+  '$SET_ALARM': set_alarm,
   '$SET_TIMER': set_timer,
   '$STOP_TIMER': _stop_timer,
   '$GET_TIMER_REMAINING': get_timer_remaining,

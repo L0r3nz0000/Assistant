@@ -14,7 +14,11 @@ $TURN_OFF_DEVICE device_id -> spegne un dispositivo smart, per esempio "Ho spent
 lista dispositivi smart:
 [{
   'name': 'luce',
-  'id':   0
+  'id': 0
+},
+{
+  'name': 'computer',
+  'id': 1
 }]
 
 i tag che funzionano con spotify vanno messi alla fine della risposta

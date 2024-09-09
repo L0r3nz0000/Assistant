@@ -55,7 +55,7 @@ def _start_alarm(time):
       _remove_alarm(_load_alarms(file_path), time)
   
 # Avvia un timer asincrono e ritorna il pid
-def start_alarm(time, repeats):
+def start_alarm(time: str, repeats: bool):
   # Verifica che l'id del timer sia unico
   if _search_alarm(_load_alarms(file_path), time) != -1:
     return False

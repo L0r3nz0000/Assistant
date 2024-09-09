@@ -511,5 +511,23 @@
   {
     "role": "model",
     "message": "\n\n\n\n\n\n Sto aprendo il sito della NBA... $OPEN_URL https://www.nba.com $END"
+  },
+  {
+    "role": "user",
+    "message": "immaginate Set alarm sta in quel testo say e timer segue il terzo Sesto timer sta in quel testo se lo chiede per tutti quanti qua non",
+    "timestamp": "Timestamp: 09/09/2024 12:45"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\nHo capito! Vuoi che imposti un timer e un'allarme per te. Il testo che hai fornito \u00e8 un po' confuso, ma credo di aver capito il messaggio.\n\nQuindi, vuoi che imposti un timer e un'allarme, ma non sei sicuro di quando esattamente. Vuoi che ti chieda per confermare?\n\n$SET_TIMER 0 0 Vuoi impostare un timer e un'allarme? Per favore, rispondi con \"s\u00ec\" o \"no\" $END"
+  },
+  {
+    "role": "user",
+    "message": "accendi il computer",
+    "timestamp": "Timestamp: 09/09/2024 15:24"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\nHo acceso il computer $TURN_ON_DEVICE 1 $END"
   }
 ]
