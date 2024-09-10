@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt update
-sudo apt install python3 python3-pip portaudio19-dev pulseaudio mpv flac -y
+sudo apt install python3 python3-pip portaudio19-dev pulseaudio mpv sshpass flac -y
 
 git clone https://github.com/L0r3nz0000/spotify-free-api.git
 cd spotify-free-api

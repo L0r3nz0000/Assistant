@@ -1,6 +1,7 @@
 {
   "output_speed": 1.1,
   "ask_for_updates": false,
+  "wol_mac_address": "04:42:1a:e9:91:0d",
   "volume_decrease": 30,
   "min_tokens": -1,
   "max_tokens": 1024,

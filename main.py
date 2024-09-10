@@ -1,3 +1,5 @@
+from clap_detector.clap import clap_callback
+from magic_packet import send_wake_on_lan
 from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
@@ -63,15 +65,32 @@ if __name__ == "__main__":
   response_completed = multiprocessing.Event()
   update_available = multiprocessing.Event()
   
-  with open('settings.json', 'r') as file:
-    settings = json.load(file)
+  if not os.path.exists('settings.json'):
+    default_settings = {
+      "output_speed": 1.1,
+      "ask_for_updates": True,
+      "wol_mac_address": "00:00:00:00:00:00",
+      "volume_decrease": 30,
+      "min_tokens": -1,
+      "max_tokens": 1024,
+      "temperature": 0.5,
+      "length_penalty": 0.5
+    }
+    with open('settings.json', 'w') as file:
+      json.dump(default_settings, file, indent=2)
   
-  if settings['ask_for_updates']:
+  with open('settings.json', 'r') as file:
+    default_settings = json.load(file)
+  
+  if default_settings['ask_for_updates']:
     updates_thread = threading.Thread(target=fetch_updates, args=(update_available,))
     updates_thread.start()
   
   # Esegue il server flask per spotify connect
   subprocess.Popen([".env/bin/python3", "-m", "flask", "run"], cwd='spotify-free-api')
+  
+  clap_thread = threading.Thread(target=clap_callback, args=(send_wake_on_lan, default_settings['wol_mac_address']))
+  clap_thread.start()
 
   # Carica il prompt system dal file
   with open("system_prompt.txt", "r") as file:
