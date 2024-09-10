@@ -13,9 +13,9 @@ The idea behind this voice assistant is to implement useful functions, such as s
 
 Start the service with ```sudo systemctl start Assistant```.
 
-You can use the default wake word "jarvis", wait for the activation sound and then ask your question.
-if you want to change the wake word, you can go to [Picovoice](https://console.picovoice.ai/), create your 
-wake word and download it in the wake_word_models/ directory
+You can use the default wake word "jarvis." Wait for the activation sound and then ask your question.
+If you want to change the wake word, you can go to [Picovoice](https://console.picovoice.ai/), create your
+wake word, and download it into the wake_word_models/ directory
 
 # Functions
 
@@ -25,9 +25,9 @@ wake word and download it in the wake_word_models/ directory
 * Create a timer
 * Delete a timer
 * Open websites on your browser
-* Set an alarm that repeats or not
+* Set an alarm (repeating or one-time)
 * Change the speed of the voice according to the user preferences
-* Delete all the history of the chat
+* Delete all chat history
 * Automatically pull new commits from this repo
 * Change the master volume
 * Turn on and off varius devices
