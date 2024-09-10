@@ -66,3 +66,6 @@ def clap_callback(callback, args=()):
     stream.close()
     p.terminate()
     print("Interrotto.")
+        
+# if __name__ == "__main__":
+#   clap_callback(print, args=('double clap',))

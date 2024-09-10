@@ -7,8 +7,6 @@ import signal
 import json
 import os
 
-#TODO: testare queste funzioni
-
 file_path = 'alarms.json'
 
 def _search_alarm(alarms, time):
@@ -42,6 +40,7 @@ def _start_alarm(time):
 
   while now.strftime("%H:%M") != time:
     sleep(1)
+    now = datetime.now()
 
   # Riproduce il suono allo scadere del tempo
   s.play()
@@ -61,13 +60,13 @@ def start_alarm(time: str, repeats: bool):
     return False
   
   # Crea il processo per il timer
-  alarm_process = multiprocessing.Process(target=_start_alarm, args=(time))
+  alarm_process = multiprocessing.Process(target=_start_alarm, args=(time,))
   alarm_process.daemon = False
   alarm_process.start()  # Avvia il processo
 
   pid = alarm_process.pid
 
-  print(f"Nuovo timer impostato id:{id} pid:{pid}")
+  print(f"Nuova sveglia impostata pid:{pid}")
 
   save_alarm({
     "time": time,
@@ -78,8 +77,8 @@ def start_alarm(time: str, repeats: bool):
   return True
 
 def _remove_alarm(alarms, time):
-  for i, timer in enumerate(alarms):
-    if timer["time"] == time:
+  for i, alarm in enumerate(alarms):
+    if alarm["time"] == time:
       alarms.pop(i)
       _save(alarms)
       return True
@@ -97,19 +96,10 @@ def stop_alarm(time):
       try:
         kill_process_and_children(pid)
       except ProcessLookupError:
-        print("la sveglia non è stata trovata, forse era già scaduto?")
+        print("la sveglia non è stata trovata, forse era già scaduta?")
       
       return True
   return False
-
-def get_remaining(id):
-  timers = _load_alarms(file_path)
-
-  for timer in timers:
-    if timer['id'] == id:
-      return timer['seconds'] - timer['elapsed']
-  return -1
-
 
 def save_alarm(alarm):
   alarms = _load_alarms(file_path)

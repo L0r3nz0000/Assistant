@@ -1,10 +1,10 @@
 from timer import start_timer, stop_timer, _get_timer_pid, get_remaining
 from readable_time import convert_seconds_to_readable_time
 from volume_controller import set_master_volume
-from alarm import start_alarm
+from alarm import start_alarm, stop_alarm
 from events import new_event
-from magic_paket import send_wake_on_lan
 from tts import speak
+from devices import power_on, power_off
 import webbrowser
 import subprocess
 import threading
@@ -348,18 +348,17 @@ def add_artist_to_queue(text, token):
 def turn_on(text, token):
   matches = re.findall(pattern_turn_on, text)
 
-  for id in matches:
-    if id == '0':
-      async_post('http://192.168.1.124/power_on')
-    elif id == '1':
-      send_wake_on_lan('04:42:1A:E9:91:0D')
+  for _id in matches:
+    power_on(_id)
+    
   return re.sub(pattern_turn_on, '', text)
 
 def turn_off(text, token):
   matches = re.findall(pattern_turn_off, text)
 
-  for id in matches:
-    async_post('http://192.168.1.124/power_off')
+  for _id in matches:
+    power_off(_id)
+    
   return re.sub(pattern_turn_off, '', text)
 
 def set_alarm(text, token):
@@ -372,13 +371,25 @@ def set_alarm(text, token):
     start_alarm(time, repeats)
   return re.sub(pattern_alarm, '', text)
 
+def _stop_alarm(text, token):
+  matches = re.findall(pattern_alarm, text)
+  
+  for match in matches:
+    time = match[0]
+    stop_alarm(time)
+  return re.sub(pattern_alarm, '', text)
+
 # TODO: dividere le funzioni in più file per semplificare la lettura del codice
 
 functions = {
+  # Sveglie
   '$SET_ALARM': set_alarm,
+  '$STOP_ALARM': _stop_alarm,
+  # Timer
   '$SET_TIMER': set_timer,
   '$STOP_TIMER': _stop_timer,
   '$GET_TIMER_REMAINING': get_timer_remaining,
+  # Varie
   '$OPEN_URL': open_url,
   '$SET_SPEED': set_speed,
   '$REMOVE_HISTORY': remove_history,
@@ -386,7 +397,7 @@ functions = {
   '$SET_MASTER_VOLUME': set_volume,
   '$TURN_ON_DEVICE': turn_on,
   '$TURN_OFF_DEVICE': turn_off,
-  
+  # Funzioni di Spotify
   '$PAUSE': pause,
   '$RESUME': resume,
   '$NEXT_TRACK': next_track,

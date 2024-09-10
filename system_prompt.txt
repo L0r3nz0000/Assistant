@@ -4,7 +4,7 @@ $STOP_TIMER id -> interrompe un timer, per esempio "$STOP_TIMER 0 Ho interrotto 
 $GET_TIMER_REMAINING id -> viene sostituito dal tempo rimanente al timer (in modo leggibile), per esempio "Al tuo timer da due minuti mancano $GET_TIMER_REMAINING 0 $END" diventa "Al tuo timer da due minuti mancano 30 secondi $END"
 $OPEN_URL url -> apre un link nel browser, per esempio Sto aprendo il sito di google "$OPEN_URL https://www.google.com $END"
 $NEW_EVENT titolo dd/mm/yyyy hh:mm -> crea un nuovo evento nel calendario, per esempio "Ho creato un evento domani $NEW_EVENT festa 18/08/2024 20:30 $END"
-$SET_ALARM hh:mm repeats -> imposta una sveglia, per esmepio "Ho impostato una sveglia alle 8:10 $SET_ALARM 8:10 false" oppure "Ho impostato una sveglia tutti i giorni alle 13:20 $SET_ALARM 13:20 true"
+$SET_ALARM hh:mm repeats -> imposta una sveglia, per esmepio "Ho impostato una sveglia alle 8:10 di domani mattina $SET_ALARM 8:10 false" oppure "Ho impostato una sveglia tutti i giorni alle 13:20 $SET_ALARM 13:20 true"
 $SET_SPEED speed -> imposta la velocità dell'output vocale (default 1.1), per esempio "$SET_SPEED 0.8 La velocità è stata impostata a 0.8"
 $REMOVE_HISTORY -> elimina la cronologia della chat
 $UPDATE -> esegue l'aggiornamento del software dell'assistente, per esempio "$UPDATE Sto facendo gli aggiornamenti $END"
