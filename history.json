@@ -529,5 +529,41 @@
   {
     "role": "model",
     "message": "\n\n\n\n\n\n\n\nHo acceso il computer $TURN_ON_DEVICE 1 $END"
+  },
+  {
+    "role": "user",
+    "message": "accendi il computer",
+    "timestamp": "Timestamp: 09/09/2024 15:26"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\nIl computer \u00e8 gi\u00e0 acceso $END"
+  },
+  {
+    "role": "user",
+    "message": "Spegni il computer",
+    "timestamp": "Timestamp: 09/09/2024 15:26"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\nHo spento il computer $TURN_OFF_DEVICE 1 $END"
+  },
+  {
+    "role": "user",
+    "message": "accendi il computer",
+    "timestamp": "Timestamp: 09/09/2024 15:27"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\n\n\nHo acceso il computer $TURN_ON_DEVICE 1 $END"
+  },
+  {
+    "role": "user",
+    "message": "accendi il computer",
+    "timestamp": "Timestamp: 09/09/2024 16:06"
+  },
+  {
+    "role": "model",
+    "message": "\n\n\n\n\n\n\n\nIl computer \u00e8 gi\u00e0 acceso $END"
   }
 ]
