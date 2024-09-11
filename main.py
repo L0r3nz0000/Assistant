@@ -88,11 +88,11 @@ if __name__ == "__main__":
   # Esegue il server flask per spotify connect
   subprocess.Popen([".env/bin/python3", "-m", "flask", "run"], cwd='spotify-free-api')
   
-  tt = MyTapTester()
-  tt.double_clap_callback(power_on, (0,))
+  # tt = MyTapTester()
+  # tt.double_clap_callback(power_on, (0,))
   
-  clap_thread = threading.Thread(target=tt.listen)
-  clap_thread.start()
+  # clap_thread = threading.Thread(target=tt.listen)
+  # clap_thread.start()
 
   # Carica il prompt system dal file
   with open("system_prompt.txt", "r") as file:
