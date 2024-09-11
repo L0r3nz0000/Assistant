@@ -1,5 +1,5 @@
 from magic_packet import send_wake_on_lan
-from filter import async_post, execute
+import paramiko
 import json
 
 def add_button(name: str, ip_address: str, _id: int):
@@ -17,7 +17,7 @@ def add_button(name: str, ip_address: str, _id: int):
   with open('devices.json', 'w') as file:
     json.dump(devices, file)
     
-def add_computer(name: str, ip_address: str, mac_address: str, password: str, _id: int):
+def add_computer(name: str, ip_address: str, mac_address: str, username: str, password: str, _id: int):
   with open('devices.json', 'r') as file:
     devices = json.load(file)
 
@@ -28,6 +28,7 @@ def add_computer(name: str, ip_address: str, mac_address: str, password: str, _i
     'type': 'computer',
     'ip_address': ip_address,
     'mac_address': mac_address,
+    'username': username,
     'password': password
   })
 
@@ -35,6 +36,15 @@ def add_computer(name: str, ip_address: str, mac_address: str, password: str, _i
     json.dump(devices, file)
 
 def power_on(_id: int):
+  """
+  Accende un dispositivo.
+
+  Parameters
+  ----------
+  _id : int
+    L'id del dispositivo da accendere.
+  """
+  from filter import async_post
   with open('devices.json', 'r') as file:
     devices = json.load(file)
 
@@ -57,7 +67,26 @@ def power_on(_id: int):
   with open('devices.json', 'w') as file:
     json.dump(devices, file)
 
+def ssh_shutdown(hostname, username, password):
+  import subprocess
+  try:
+    comando_spegnimento = f"sshpass -p '{password}' ssh -o StrictHostKeyChecking=no {username}@{hostname} 'echo \'{password}\' | sudo shutdown -h now'"
+    
+    subprocess.Popen(comando_spegnimento, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  except Exception as e:
+    print(f"Errore durante la connessione o l'esecuzione del comando: {e}")
+
+
 def power_off(_id: int):
+  """
+  Spegne il dispositivo con l'id specificato.
+  
+  Parameters
+  ----------
+  _id : int
+    L'id del dispositivo da spegnere.
+  """
+  from filter import async_post
   with open('devices.json', 'r') as file:
     devices = json.load(file)
   
@@ -72,7 +101,7 @@ def power_off(_id: int):
         case 'computer':
           device['state'] = 'off'
           # TODO: provare lo spegnimento del computer tramite ssh
-          execute(f'sshpass -p "{device["password"]}" ssh -o StrictHostKeyChecking=no {device["ip_address"]} "echo \'{device["password"]}\' | sudo -S shutdown -h now"')
+          ssh_shutdown(device['ip_address'], device['username'], device['password'])
           
         case _:
           pass
@@ -106,9 +135,10 @@ Scegli un tipo di dispositivo da aggiungere tra quelli compatibili:
   
   if type == 'computer':
     mac_address = input("Inserisci l'indirizzo MAC del dispositivo: ")
+    username = input("Inserisci lo username del dispositivo (verrà utilizzato per spegnere il dispositivo tramite ssh): ")
     password = input("Inserisci la password del dispositivo (verrà utilizzata per spegnere il dispositivo tramite ssh): ")
 
-    add_computer(name, ip_address, mac_address, password, _id)
+    add_computer(name, ip_address, mac_address, username, password, _id)
     
   elif type == 'button':
     add_button(name, ip_address, _id)

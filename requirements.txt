@@ -7,3 +7,5 @@ speechrecognition
 psutil
 markdown2
 beautifulsoup4
+numpy
+scipy
