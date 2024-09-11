@@ -44,7 +44,7 @@ def power_on(_id: int):
       match device['type']:
         case 'button':
           device['state'] = 'on'
-          # TODO: implementare un autenticazione per accendere e spegnere le luci<
+          # TODO: implementare un autenticazione per accendere e spegnere le luci
           async_post(f'http://{device["ip_address"]}/power_on')
           
         case 'computer':
