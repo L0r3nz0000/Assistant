@@ -1,10 +1,10 @@
-from clap_detector.clap import clap_callback
-from magic_packet import send_wake_on_lan
 from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
 from stt import listen_prompt
+from devices import power_off, power_on
 import multiprocessing
+from clap_detector.clap import MyTapTester
 from time import time
 from tts import speak
 import subprocess
@@ -69,7 +69,6 @@ if __name__ == "__main__":
     default_settings = {
       "output_speed": 1.1,
       "ask_for_updates": True,
-      "wol_mac_address": "00:00:00:00:00:00",
       "volume_decrease": 30,
       "min_tokens": -1,
       "max_tokens": 1024,
@@ -89,7 +88,10 @@ if __name__ == "__main__":
   # Esegue il server flask per spotify connect
   subprocess.Popen([".env/bin/python3", "-m", "flask", "run"], cwd='spotify-free-api')
   
-  clap_thread = threading.Thread(target=clap_callback, args=(send_wake_on_lan, default_settings['wol_mac_address']))
+  tt = MyTapTester()
+  tt.double_clap_callback(power_on, (0,))
+  
+  clap_thread = threading.Thread(target=tt.listen)
   clap_thread.start()
 
   # Carica il prompt system dal file
