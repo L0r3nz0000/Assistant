@@ -102,16 +102,21 @@ class ChatState:
     prompt = self.get_full_prompt()
 
     input = {
-      "prompt":         prompt,
-      "max_tokens":     self.settings['max_tokens'],
-      "min_tokens":     self.settings['min_tokens'],
-      "temperature":    self.settings['temperature'],
-      "length_penalty": self.settings['length_penalty']
+      #"prompt_template":  prompt,
+      "prompt":           prompt,
+      "system_prompt":    self.system_prompt,
+      "max_tokens":       self.settings['max_tokens'],
+      "min_tokens":       self.settings['min_tokens'],
+      "temperature":      self.settings['temperature'],
+      "length_penalty":   self.settings['length_penalty']
     }
-
+    
+    #self.history[-1] = self.history[-1].replace('{prompt}', message)
+    
     response = ""
 
     try:
+      # TODO: inviare batch di testo mentre viene generata la risposta
       for event in replicate.stream(self.MODEL_NAME, input=input):
         response += str(event)
 
