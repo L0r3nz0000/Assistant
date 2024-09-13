@@ -63,7 +63,7 @@ class ChatState:
     now = datetime.now()
     
     timestamp = f'Timestamp: {now.strftime("%d/%m/%Y")} {now.strftime("%H:%M")}'
-    self.history.append(self.__START_TURN_USER__ + timestamp + '\n' + message + self.__END_TURN__)
+    self.history.append(self.__START_TURN_USER__ + timestamp + '\n{prompt}' + self.__END_TURN__)
 
     self.history_json.append({
       "role": "user",
@@ -99,19 +99,23 @@ class ChatState:
 
   def send_message(self, message):
     self.add_to_history_as_user(message)
-    prompt = self.get_full_prompt()
+    prompt_template = self.get_full_prompt()
 
     input = {
-      "prompt":         prompt,
-      "max_tokens":     self.settings['max_tokens'],
-      "min_tokens":     self.settings['min_tokens'],
-      "temperature":    self.settings['temperature'],
-      "length_penalty": self.settings['length_penalty']
+      "prompt_template":  prompt_template,
+      "prompt":           message,
+      "max_tokens":       self.settings['max_tokens'],
+      "min_tokens":       self.settings['min_tokens'],
+      "temperature":      self.settings['temperature'],
+      "length_penalty":   self.settings['length_penalty']
     }
-
+    
+    self.history[-1] = self.history[-1].replace('{prompt}', message)
+    
     response = ""
 
     try:
+      # TODO: inviare batch di testo mentre viene generato
       for event in replicate.stream(self.MODEL_NAME, input=input):
         response += str(event)
 
