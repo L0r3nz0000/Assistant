@@ -121,7 +121,7 @@ def transcribe_vosk(audio: sr.AudioData):
     if r['conf'] >= MINIMUM_CONFIDENCE_VOSK:
       text += r['word'] + ' '
   
-  return results['text']#text.strip()
+  return text.strip()
 
 def listen_prompt(timeout=8, stt_backend='vosk', remove_noise=True):
   # Ottiene la lista delle app che stanno riproducendo audio
