@@ -27,6 +27,9 @@ def blocking_wake_word(conversation_open, response_completed, update_available):
   old_stderr = suppress_stderr()
 
   pa = pyaudio.PyAudio()
+  
+  print("sample rate:", handle.sample_rate)
+  print("frame length:", handle.frame_length)
 
   audio_stream = pa.open(
     rate=handle.sample_rate,
