@@ -1,7 +1,8 @@
 from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
-from stt import listen_prompt
+#from stt import listen_prompt
+from vosk_real_time import recognize_word
 from devices import power_off, power_on
 #import multiprocessing
 from thread_exception import StoppableThread
@@ -10,15 +11,15 @@ from time import time
 from tts import speak
 import subprocess
 import threading
-import signal
 import json
 import os
 
+# chat inizializzata a None per non perdere il riferimanto (per il garbage collector)
 chat = None
+activation_word = "alexa"
 
-def new_interaction(conversation_open, response_completed, update_available):
+def new_interaction(user_prompt, conversation_open, response_completed, update_available):
   chat = ChatState(system=system_prompt)
-  user_prompt = ""
   
   with open('settings.json', 'r') as file:
     settings = json.load(file)
@@ -29,8 +30,6 @@ def new_interaction(conversation_open, response_completed, update_available):
     speak(question)
     
     chat.add_to_history_as_model(question)
-    
-  user_prompt = listen_prompt()
 
   thread = StoppableThread(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
   thread.start()
@@ -94,13 +93,13 @@ if __name__ == "__main__":
     system_prompt = file.read()
     
   # Loop eventi
-  blocking_wake_word(conversation_open, response_completed, update_available)
-  t = new_interaction(conversation_open, response_completed, update_available)
+  user_prompt = recognize_word(activation_word)
+  t = new_interaction(user_prompt, conversation_open, response_completed, update_available)
 
   while True:
-    blocking_wake_word(conversation_open, response_completed, update_available)
+    user_prompt = recognize_word(activation_word)
     t.terminate()
     print("Thread interrotto")
 
     print("Sto creando un nuovo thread...")
-    t = new_interaction(conversation_open, response_completed, update_available)
+    t = new_interaction(user_prompt, conversation_open, response_completed, update_available)
