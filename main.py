@@ -3,7 +3,7 @@ from updates import fetch_updates
 from ChatState import ChatState
 #from stt import listen_prompt
 from vosk_real_time import recognize_word
-from devices import power_off, power_on
+from devices.devices import power_off, power_on
 #import multiprocessing
 from thread_exception import StoppableThread
 #from clap_detector.clap import MyTapTester
