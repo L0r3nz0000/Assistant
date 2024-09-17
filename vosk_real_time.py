@@ -10,7 +10,7 @@ from vosk import Model, KaldiRecognizer, SetLogLevel
 model = Model(lang="it")
 
 SAMPLE_RATE = 16000
-FRAME_LENGTH = 512
+FRAME_LENGTH = 4096
 MINIMUM_CONFIDENCE_VOSK = 0.6
 
 def recognize_word(activation_word):
