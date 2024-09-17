@@ -1,10 +1,10 @@
-from timer import start_timer, stop_timer, _get_timer_pid, get_remaining
+from timer.timer import start_timer, stop_timer, _get_timer_pid, get_remaining
 from readable_time import convert_seconds_to_readable_time
 from volume_controller import set_master_volume
-from alarm import start_alarm, stop_alarm
+from alarm.alarm import start_alarm, stop_alarm
 from events import new_event
 from tts import speak
-from devices import power_on, power_off
+from devices.devices import power_on, power_off
 import webbrowser
 import subprocess
 import threading
