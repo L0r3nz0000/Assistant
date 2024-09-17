@@ -8,5 +8,10 @@ spotify-free-api
 Koala
 scripts/*
 settings.json
+<<<<<<< HEAD
 devices.jsonsounds/input.wav
 vosk_microfone/vosk-model-it-0.22
+=======
+devices.json
+vosk_microfone/vosk-model-it-0.22/
+>>>>>>> instant_wake_word
