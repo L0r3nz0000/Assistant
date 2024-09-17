@@ -1,10 +1,10 @@
 from updates import fetch_updates
 from ChatState import ChatState
 from speech_recognizer.vosk_real_time import recognize_word
-from devices.devices import power_off, power_on
 from thread_exception import StoppableThread
 from time import time
 from tts import speak
+from buffer_reader import BufferReader
 import subprocess
 import threading
 import json
@@ -14,7 +14,7 @@ import os
 chat = None
 activation_word = "alexa"
 
-def new_interaction(user_prompt, conversation_open, response_completed, update_available):
+def new_interaction(user_prompt, conversation_open, update_available):
   chat = ChatState(system=system_prompt)
   
   with open('settings.json', 'r') as file:
@@ -27,38 +27,37 @@ def new_interaction(user_prompt, conversation_open, response_completed, update_a
     
     chat.add_to_history_as_model(question)
 
-  thread = StoppableThread(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
+  thread = StoppableThread(target=interaction, args=(chat, user_prompt, conversation_open))
   thread.start()
   return thread
 
-def interaction(chat, user_prompt, conversation_open, response_completed):
-  response_completed.clear()
-
+def interaction(chat, user_prompt, conversation_open):
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
-    start = time()
-    output = chat.send_message(user_prompt).strip()
-    print(f"[{time() - start:.2f}s] Ottenuta risposta testuale da llama.")
+    
+    generator = chat.send_message(user_prompt)
+    # Genera e riproduce dei "pezzi" di audio a partire dallo stream replicate
+    br = BufferReader(generator)
+    br.read_from_stream()
+    
     print('\033[94m' + 'Model:' + '\033[39m', output)
 
-    if output:
-      if '$END' in output:
-        # La conversazione è chiusa
-        conversation_open.clear()
-        output = output.replace('$END', '')
-      else:
-        # La conversazione continua
-        conversation_open.set()
+    # if output:
+    #   if '$END' in output:
+    #     # La conversazione è chiusa
+    #     conversation_open.clear()
+    #     output = output.replace('$END', '')
+    #   else:
+    #     # La conversazione continua
+    #     conversation_open.set()
       
-      speak(output)
+    #   speak(output)
   else:
     print(f"input non valido: '{user_prompt}'")
     conversation_open.clear()
-  response_completed.set()
 
 if __name__ == "__main__":
   conversation_open = threading.Event()  # Default False
-  response_completed = threading.Event()
   update_available = threading.Event()
   
   if not os.path.exists('settings.json'):
@@ -90,7 +89,7 @@ if __name__ == "__main__":
     
   # Loop eventi
   user_prompt = recognize_word(activation_word)
-  t = new_interaction(user_prompt, conversation_open, response_completed, update_available)
+  t = new_interaction(user_prompt, conversation_open, update_available)
 
   while True:
     user_prompt = recognize_word(activation_word)
@@ -98,4 +97,4 @@ if __name__ == "__main__":
     print("Thread interrotto")
 
     print("Sto creando un nuovo thread...")
-    t = new_interaction(user_prompt, conversation_open, response_completed, update_available)
+    t = new_interaction(user_prompt, conversation_open, update_available)
