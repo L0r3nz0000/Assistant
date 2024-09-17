@@ -1,13 +1,10 @@
-import wave
-import sys
 import json
 import pyaudio
-import volume_controller
 
 from vosk import Model, KaldiRecognizer, SetLogLevel
 
 # Load the Vosk model
-model = Model(lang="it")
+model = Model("/home/lorenzo/chatbot/vosk_microfone/vosk-model-it-0.22")
 
 SAMPLE_RATE = 16000
 FRAME_LENGTH = 4096

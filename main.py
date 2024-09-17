@@ -2,7 +2,7 @@ from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
 #from stt import listen_prompt
-from vosk_real_time import recognize_word
+from vosk_microfone.vosk_real_time import recognize_word
 from devices import power_off, power_on
 #import multiprocessing
 from thread_exception import StoppableThread

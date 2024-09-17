@@ -8,4 +8,5 @@ spotify-free-api
 Koala
 scripts/*
 settings.json
-devices.jsonsounds/input.wav
+devices.json
+vosk_microfone/vosk-model-it-0.22/
