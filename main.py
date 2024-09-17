@@ -3,8 +3,9 @@ from updates import fetch_updates
 from ChatState import ChatState
 from stt import listen_prompt
 from devices import power_off, power_on
-import multiprocessing
-from clap_detector.clap import MyTapTester
+#import multiprocessing
+from thread_exception import StoppableThread
+#from clap_detector.clap import MyTapTester
 from time import time
 from tts import speak
 import subprocess
@@ -31,9 +32,9 @@ def new_interaction(conversation_open, response_completed, update_available):
     
   user_prompt = listen_prompt()
 
-  process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
-  process.start()
-  return process
+  thread = StoppableThread(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
+  thread.start()
+  return thread
 
 def interaction(chat, user_prompt, conversation_open, response_completed):
   response_completed.clear()
@@ -61,9 +62,9 @@ def interaction(chat, user_prompt, conversation_open, response_completed):
   response_completed.set()
 
 if __name__ == "__main__":
-  conversation_open = multiprocessing.Event()  # Default False
-  response_completed = multiprocessing.Event()
-  update_available = multiprocessing.Event()
+  conversation_open = threading.Event()  # Default False
+  response_completed = threading.Event()
+  update_available = threading.Event()
   
   if not os.path.exists('settings.json'):
     default_settings = {
@@ -94,13 +95,12 @@ if __name__ == "__main__":
     
   # Loop eventi
   blocking_wake_word(conversation_open, response_completed, update_available)
-  p = new_interaction(conversation_open, response_completed, update_available)
+  t = new_interaction(conversation_open, response_completed, update_available)
 
   while True:
     blocking_wake_word(conversation_open, response_completed, update_available)
-    if p.is_alive():
-      os.kill(p.pid, signal.SIGTERM)
-      print("Processo interrotto")
+    t.terminate()
+    print("Thread interrotto")
 
-    print("Sto creando un nuovo processo...")
-    p = new_interaction(conversation_open, response_completed, update_available)
+    print("Sto creando un nuovo thread...")
+    t = new_interaction(conversation_open, response_completed, update_available)
