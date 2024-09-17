@@ -10,3 +10,4 @@ beautifulsoup4
 numpy
 scipy
 paramiko
+vosk
