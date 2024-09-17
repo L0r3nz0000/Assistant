@@ -1,1 +1,1 @@
-from .events import new_event, delete_event
+from .event import new_event, delete_event

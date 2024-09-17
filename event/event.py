@@ -17,3 +17,15 @@ def new_event(event):
   
   with open(events_path, 'w') as file:
     json.dump(events, file, indent=2)
+
+def delete_event(title):
+  events = []
+  if os.path.exists(events_path):
+    events = load_events(events_path)
+  
+  for event in events:
+    if event['title'] == title:
+      events.remove(event)
+  
+  with open(events_path, 'w') as file:
+    json.dump(events, file, indent=2)
