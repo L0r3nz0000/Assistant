@@ -7,7 +7,7 @@ import signal
 import json
 import os
 
-file_path = 'alarms.json'
+alarms_path = os.path.join(os.path.dirname(__file__), 'alarms.json')
 
 def _search_alarm(alarms, time):
   for i, alarm in enumerate(alarms):
@@ -24,14 +24,14 @@ def _load_alarms(file_path):
     return []
 
 def _get_alarm_pid(time):
-  alarms = _load_alarms(file_path)
+  alarms = _load_alarms(alarms_path)
   
   alarm = _search_alarm(alarms, time)
   return alarm['pid'] if alarm != -1 else -1
 
 # Salva le modifiche applicate al json dei timer
 def _save(alarms):
-  with open(file_path, 'w') as file:
+  with open(alarms_path, 'w') as file:
     json.dump(alarms, file, indent=2)
 
 def _start_alarm(time):
@@ -45,18 +45,18 @@ def _start_alarm(time):
   # Riproduce il suono allo scadere del tempo
   s.play()
 
-  alarm = _search_alarm(_load_alarms(file_path), time)
+  alarm = _search_alarm(_load_alarms(alarms_path), time)
   
   if alarm != -1:
     # Il timer non deve ripetersi
     if not alarm['repeats']:
       # Elimina il timer dalla lista
-      _remove_alarm(_load_alarms(file_path), time)
+      _remove_alarm(_load_alarms(alarms_path), time)
   
 # Avvia un timer asincrono e ritorna il pid
 def start_alarm(time: str, repeats: bool):
   # Verifica che l'id del timer sia unico
-  if _search_alarm(_load_alarms(file_path), time) != -1:
+  if _search_alarm(_load_alarms(alarms_path), time) != -1:
     return False
   
   # Crea il processo per il timer
@@ -85,7 +85,7 @@ def _remove_alarm(alarms, time):
   return False
 
 def stop_alarm(time):
-  alarms = _load_alarms(file_path)
+  alarms = _load_alarms(alarms_path)
 
   # Cerca l'id del timer e lo interrompe inviando un SIGTERM al processo
   for alarm in alarms:
@@ -102,7 +102,7 @@ def stop_alarm(time):
   return False
 
 def save_alarm(alarm):
-  alarms = _load_alarms(file_path)
+  alarms = _load_alarms(alarms_path)
   time = alarm['time']
   
   i = _search_alarm(alarms, time)

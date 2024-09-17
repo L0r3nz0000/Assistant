@@ -2,7 +2,7 @@ from timer.timer import start_timer, stop_timer, _get_timer_pid, get_remaining
 from readable_time import convert_seconds_to_readable_time
 from volume_controller import set_master_volume
 from alarm.alarm import start_alarm, stop_alarm
-from events import new_event
+from event.events import new_event
 from tts import speak
 from devices.devices import power_on, power_off
 import webbrowser
@@ -105,6 +105,8 @@ def remove_history(text, token):
     file.write("[]")
   return text.replace(token, '')
 
+
+# TODO: verificare di essere nella repo git per evitare errori da git
 def update(text, token):
   local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
   remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()

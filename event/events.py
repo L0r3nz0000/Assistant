@@ -1,7 +1,7 @@
 import json
 import os
 
-file_path = 'events.json'
+events_path = os.path.join(os.path.dirname(__file__), 'events.json')
 
 def load_events(file_path):
   # Apri il file e carica il contenuto
@@ -10,10 +10,10 @@ def load_events(file_path):
 
 def new_event(event):
   events = []
-  if os.path.exists(file_path):
-    events = load_events(file_path)
+  if os.path.exists(events_path):
+    events = load_events(events_path)
   
   events.append(event)
   
-  with open(file_path, 'w') as file:
+  with open(events_path, 'w') as file:
     json.dump(events, file, indent=2)
