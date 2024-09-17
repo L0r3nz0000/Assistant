@@ -1,17 +1,8 @@
-from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
-#from stt import listen_prompt
-<<<<<<< HEAD
-from vosk_real_time import recognize_word
+from speech_recognizer.vosk_real_time import recognize_word
 from devices.devices import power_off, power_on
-=======
-from vosk_microfone.vosk_real_time import recognize_word
-from devices import power_off, power_on
->>>>>>> instant_wake_word
-#import multiprocessing
 from thread_exception import StoppableThread
-#from clap_detector.clap import MyTapTester
 from time import time
 from tts import speak
 import subprocess

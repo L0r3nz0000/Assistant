@@ -2,7 +2,7 @@ from timer.timer import start_timer, stop_timer, _get_timer_pid, get_remaining
 from readable_time import convert_seconds_to_readable_time
 from volume_controller import set_master_volume
 from alarm.alarm import start_alarm, stop_alarm
-from events import new_event
+from event import new_event
 from tts import speak
 from devices.devices import power_on, power_off
 import webbrowser
@@ -13,8 +13,7 @@ import json
 import os
 import re
 
-python_interpreter = "python3"
-
+# Filtri regex
 pattern_alarm = r'\$SET_ALARM\s+(\d{1,2}:\d{1,2})\s+(true|false)'                     #   $SET_ALARM hh:mm repeats
 pattern_turn_on = r'\$TURN_ON_DEVICE\s+(\d+)'                                         #   $TURN_ON device_id
 pattern_turn_off = r'\$TURN_OFF_DEVICE\s+(\d+)'                                       #   $TURN_OFF device_id
@@ -35,6 +34,9 @@ pattern_url = r'\$OPEN_URL\s+(\S+)'                                             
 pattern_python = r'```python(.*?)```'                                                 #   ```python    code    ```
 pattern_bash = r'```bash(.*?)```'                                                     #   ```bash      code    ```
 pattern_event = r'\$NEW_EVENT\s+(\S+)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{1,2})'  #   $NEW_EVENT titolo dd/mm/yyyy hh:mm
+
+python_interpreter = "python3"
+bash_interpreter = "bash"
 
 def execute(command):
   threading.Thread(target=subprocess.run, args=(command.split(),)).start()
@@ -77,7 +79,7 @@ def execute_and_remove_code_blocks(text, remove=False):
   
   return modified_text if remove else text
 
-def new_event(text, token):
+def create_event(text, token):
   matches = re.findall(pattern_event, text)
   if matches:
     for match in matches:
@@ -105,6 +107,8 @@ def remove_history(text, token):
     file.write("[]")
   return text.replace(token, '')
 
+
+# TODO: verificare di essere nella repo git per evitare errori da git
 def update(text, token):
   local = subprocess.run(["git", "rev-parse", "@"], capture_output=True, text=True).stdout.strip()
   remote = subprocess.run(["git", "rev-parse", "@{u}"], capture_output=True, text=True).stdout.strip()
@@ -389,6 +393,8 @@ functions = {
   '$SET_TIMER': set_timer,
   '$STOP_TIMER': _stop_timer,
   '$GET_TIMER_REMAINING': get_timer_remaining,
+  # Eventi
+  '$NEW_EVENT': create_event,
   # Varie
   '$OPEN_URL': open_url,
   '$SET_SPEED': set_speed,
