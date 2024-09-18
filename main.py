@@ -40,7 +40,7 @@ def interaction(chat, user_prompt, conversation_open):
     br = BufferReader(generator)
     br.read_from_stream()
     
-    print('\033[94m' + 'Model:' + '\033[39m', output)
+    # print('\033[94m' + 'Model:' + '\033[39m', output)
 
     # if output:
     #   if '$END' in output:

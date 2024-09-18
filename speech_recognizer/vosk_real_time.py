@@ -8,6 +8,9 @@ import os
 model_name = "vosk-model-it-0.22/"
 model_path = os.path.join(os.path.dirname(__file__), model_name)
 
+#! DA RIMUOVERE
+#model_path = "/media/lorenzo/C444-1BD8/vosk-model-it-0.22/"
+
 # Load the Vosk model
 model = Model(model_path)
 
