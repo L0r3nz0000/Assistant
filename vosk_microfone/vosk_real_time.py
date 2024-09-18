@@ -1,10 +1,11 @@
 import json
 import pyaudio
+import redirect_output
 
 from vosk import Model, KaldiRecognizer, SetLogLevel
 
 # Load the Vosk model
-model = Model("/home/lorenzo/chatbot/vosk_microfone/vosk-model-it-0.22")
+model = Model("/media/lorenzo/C444-1BD8/vosk-model-it-0.22")
 
 SAMPLE_RATE = 16000
 FRAME_LENGTH = 4096
