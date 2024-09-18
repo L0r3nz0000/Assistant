@@ -111,23 +111,18 @@ class ChatState:
       "length_penalty":   self.settings['length_penalty']
     }
     
-    #self.history[-1] = self.history[-1].replace('{prompt}', message)
-    
-    response = ""
-
     try:
-      # TODO: inviare batch di testo mentre viene generata la risposta
-      for event in replicate.stream(self.MODEL_NAME, input=input):
-        response += str(event)
+      # ritorna il generatore per ottenere la risposta
+      return replicate.stream(self.MODEL_NAME, input=input)
 
     except replicate.exceptions.ReplicateError as e:
       print(e)
       exit(1)
     
-    self.add_to_history_as_model(response)
+    # self.add_to_history_as_model(response)
 
-    # Salva la risposta senza sostituire i token
-    self._save_json_history(self.HISTORY_FILE)
+    # # Salva la risposta senza sostituire i token
+    # self._save_json_history(self.HISTORY_FILE)
 
-    # Ritorna la risposta dopo aver sostituito i token
-    return replace_tokens(response)
+    # # Ritorna la risposta dopo aver sostituito i token
+    # return replace_tokens(response)

@@ -3,9 +3,13 @@ import pyaudio
 import redirect_output
 
 from vosk import Model, KaldiRecognizer, SetLogLevel
+import os
+
+model_name = "vosk-model-it-0.22/"
+model_path = os.path.join(os.path.dirname(__file__), model_name)
 
 # Load the Vosk model
-model = Model("/media/lorenzo/C444-1BD8/vosk-model-it-0.22")
+model = Model(model_path)
 
 SAMPLE_RATE = 16000
 FRAME_LENGTH = 4096

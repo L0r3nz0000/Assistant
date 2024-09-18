@@ -6,7 +6,7 @@ import signal
 import json
 import os
 
-file_path = 'timers.json'
+timers_path = os.path.join(os.path.dirname(__file__), 'timers.json')
 
 def _search_timer(timers, id):
   for i, timer in enumerate(timers):
@@ -23,7 +23,7 @@ def _load_timers(file_path):
     return []
 
 def _get_timer_pid(id):
-  timers = _load_timers(file_path)
+  timers = _load_timers(timers_path)
   for timer in timers:
     if timer["id"] == id:
       return timer["pid"]
@@ -31,7 +31,7 @@ def _get_timer_pid(id):
 
 # Salva le modifiche applicate al json dei timer
 def _save(timers):
-  with open(file_path, 'w') as file:
+  with open(timers_path, 'w') as file:
     json.dump(timers, file, indent=2)
 
 def _start_timer(id, seconds):
@@ -45,7 +45,7 @@ def _start_timer(id, seconds):
     elapsed += 1
 
     # Carica i timer dal file
-    timers = _load_timers(file_path)
+    timers = _load_timers(timers_path)
 
     for i, timer in enumerate(timers):
       if timer['id'] == id:
@@ -62,7 +62,7 @@ def _start_timer(id, seconds):
 # Avvia un timer asincrono e ritorna il pid
 def start_timer(id, seconds):
   # Verifica che l'id del timer sia unico
-  if _search_timer(_load_timers(file_path), id) != -1:
+  if _search_timer(_load_timers(timers_path), id) != -1:
     return False
   
   # Crea il processo per il timer
@@ -92,7 +92,7 @@ def _remove_timer(timers, id):
   return False
 
 def stop_timer(id):
-  timers = _load_timers(file_path)
+  timers = _load_timers(timers_path)
 
   # Cerca l'id del timer e lo interrompe inviando un SIGTERM al processo
   for timer in timers:
@@ -110,7 +110,7 @@ def stop_timer(id):
   return False
 
 def get_remaining(id):
-  timers = _load_timers(file_path)
+  timers = _load_timers(timers_path)
 
   for timer in timers:
     if timer['id'] == id:
@@ -118,7 +118,7 @@ def get_remaining(id):
   return -1
 
 def save_timer(timer):
-  timers = _load_timers(file_path)
+  timers = _load_timers(timers_path)
   
   i = _search_timer(timers, id)
   if i != -1:

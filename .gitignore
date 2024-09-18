@@ -8,5 +8,8 @@ spotify-free-api
 Koala
 scripts/*
 settings.json
-devices.json
-vosk_microfone/vosk-model-it-0.22/
+devices/devices.json
+timer/timers.json
+alarm/alarms.json
+event/events.json
+speech_recognizer/vosk-model-it-0.22/
