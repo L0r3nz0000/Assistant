@@ -37,7 +37,7 @@ def interaction(chat, user_prompt, conversation_open):
     
     generator = chat.send_message(user_prompt)
     # Genera e riproduce dei "pezzi" di audio a partire dallo stream replicate
-    br = BufferReader(generator)
+    br = BufferReader(chat, generator)
     br.read_from_stream()
     
     # print('\033[94m' + 'Model:' + '\033[39m', output)

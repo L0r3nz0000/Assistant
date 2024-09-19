@@ -52,8 +52,8 @@ class ChatState:
       
       self._load_history_from_json()
 
-  def _save_json_history(self, file_path):
-    with open(file_path, 'w') as file:
+  def _save_json_history(self):
+    with open(self.HISTORY_FILE, 'w') as file:
       json.dump(self.history_json, file, indent=2)
 
   def add_to_history_as_user(self, message):
@@ -122,7 +122,7 @@ class ChatState:
     # self.add_to_history_as_model(response)
 
     # # Salva la risposta senza sostituire i token
-    # self._save_json_history(self.HISTORY_FILE)
+    # self._save_json_history()
 
     # # Ritorna la risposta dopo aver sostituito i token
     # return replace_tokens(response)
