@@ -13,3 +13,4 @@ timer/timers.json
 alarm/alarms.json
 event/events.json
 speech_recognizer/vosk-model-it-0.22/
+sounds/output*.mp3
