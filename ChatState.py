@@ -70,6 +70,8 @@ class ChatState:
       "message": message,
       "timestamp": timestamp
     })
+    
+    self._save_json_history()
 
   def add_to_history_as_model(self, message):
     """
@@ -81,6 +83,8 @@ class ChatState:
       "role": "model",
       "message": message
     })
+    
+    self._save_json_history()
 
   def get_history(self):
     """

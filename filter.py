@@ -136,10 +136,9 @@ def set_timer(text, token):
 
         if not start_timer(id, seconds):  # Imposta un timer
           print(f"Impossibile creare due timer con lo stesso id: {id}")
-          speak("Non sono riuscito ad impostare il timer")
 
       except ValueError:
-        speak("Non sono riuscito ad impostare il timer")
+        print("time non impostato")
 
     text = re.sub(filters['pattern_timer'], '', text)
   return text
@@ -419,10 +418,6 @@ functions = {
   '$ADD_ARTIST_TO_QUEUE': add_artist_to_queue
 }
 
-# TODO: aggiungere queste funzioni:
-# "metti like a questa canzone"
-# "che canzone è questa??"
-
 def replace_tokens(text):
   text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
   text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash
@@ -440,3 +435,17 @@ def replace_tokens(text):
   if end:
     text += '$END'
   return text
+
+def remove_tokens(text):
+  # *Rimuove i token riconosciuti per non leggerli ad alta voce
+  
+  timer_remaining = '$GET_TIMER_REMAINING'
+  if timer_remaining in text:
+    text = functions[timer_remaining](text, timer_remaining)
+  
+  for regex in filters:
+    text = re.sub(filters[regex], '', text)
+    
+  for f in functions:
+    text = text.replace(f, '')
+  return text.strip()
