@@ -10,7 +10,7 @@ class BufferReader:
     self.generator = generator
     self.chat = chat
 
-  def read_from_stream(self, buffer_words=45, first_buffer=6):
+  def read_from_stream(self, buffer_words=45, first_buffer=10):
     # Esegue il thread per riprodurre i file audio
     threading.Thread(target=self.play_queue, args=()).start()
     
