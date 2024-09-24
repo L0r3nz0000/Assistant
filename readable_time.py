@@ -14,7 +14,7 @@ def convert_seconds_to_readable_time(seconds):
   if minutes > 0:
     time_components.append(f"{minutes} minut{'i' if minutes > 1 else 'o'}")
   if remaining_seconds > 0 or (hours == 0 and minutes == 0):
-    time_components.append(f"{remaining_seconds} second{'i' if remaining_seconds > 1 else 'o'}")
+    time_components.append(f"{remaining_seconds} second{'i' if remaining_seconds > 1 and remaining_seconds != 0 else 'o'}")
   
   # Concatena i componenti in una stringa leggibile
   if hours > 0:
