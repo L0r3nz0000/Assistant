@@ -46,9 +46,12 @@ class BufferReader:
     total_string_no_tokens = filter.remove_tokens(total_string)
     remaining_words = total_string_no_tokens.split()[first_buffer + buffer_words * audio_index:]
     
+    print("remaining words", total_string_no_tokens.split()[end_word:])
     if remaining_words:
       partial_buffer = " ".join(remaining_words)
       threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index, f"sounds/output{audio_index}.mp3")).start()
+      print(f"Buffer numero {audio_index + 1}, {len(partial_buffer.split())} parole")
+      print(f"Contenuto: {partial_buffer}\n")
 
     # Ripristina i token e salva l'output completo
     filter.replace_tokens(total_string)
