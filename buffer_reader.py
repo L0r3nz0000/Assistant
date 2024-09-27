@@ -46,7 +46,7 @@ class BufferReader:
     total_string_no_tokens = filter.remove_tokens(total_string)
     remaining_words = total_string_no_tokens.split()[first_buffer + buffer_words * audio_index:]
     
-    print("remaining words", total_string_no_tokens.split()[end_word:])
+    print("remaining words (idonno what im doin):", total_string_no_tokens.split()[first_buffer + buffer_words * audio_index:])
     if remaining_words:
       partial_buffer = " ".join(remaining_words)
       threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index, f"sounds/output{audio_index}.mp3")).start()
@@ -88,6 +88,10 @@ class BufferReader:
 from ChatState import ChatState
 
 if __name__ == "__main__":
+  # Reset history
+  with open("history.json", "w") as file:
+    file.write("[]")
+    
   with open("system_prompt.txt", "r") as file:
     system = file.read()
     
