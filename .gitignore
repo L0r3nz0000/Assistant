@@ -9,3 +9,4 @@ Koala
 scripts/*
 settings.json
 devices.json
+speech_recognizer/vosk-model-it-0.22

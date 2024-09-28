@@ -2,7 +2,7 @@ from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
 from stt import listen_prompt
-from devices import power_off, power_on
+from devices.devices import power_off, power_on
 import multiprocessing
 from clap_detector.clap import MyTapTester
 from time import time
