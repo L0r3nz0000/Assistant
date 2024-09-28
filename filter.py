@@ -18,20 +18,20 @@ filters = {
   'pattern_alarm' : r'\$SET_ALARM\s+(\d{1,2}:\d{1,2})\s+(true|false)',                     #   $SET_ALARM hh:mm repeats
   'pattern_turn_on' : r'\$TURN_ON_DEVICE\s+(\d+)',                                         #   $TURN_ON device_id
   'pattern_turn_off' : r'\$TURN_OFF_DEVICE\s+(\d+)',                                       #   $TURN_OFF device_id
-  'pattern_add_song_to_queue' : r'\$ADD_SONG_TO_QUEUE\s+([^\n]+)',                         #   $ADD_SONG_TO_QUEUE name
-  'pattern_add_artist_to_queue' : r'\$ADD_ARTIST_TO_QUEUE\s+([^\n]+)',                     #   $ADD_ARTIST_TO_QUEUE name
-  'pattern_add_album_to_queue' : r'\$ADD_ALBUM_TO_QUEUE\s+([^\n]+)',                       #   $ADD_ALBUM_TO_QUEUE name
-  'pattern_add_playlist_to_queue' : r'\$ADD_PLAYLIST_TO_QUEUE\s+([^\n]+)',                 #   $ADD_PLAYLIST_TO_QUEUE name
-  'pattern_play_artist' : r'\$PLAY_ARTIST\s+([^\n]+)',                                     #   $PLAY_ARTIST name
-  'pattern_play_playlist' : r'\$PLAY_PLAYLIST\s+([^\n]+)',                                 #   $PLAY_PLAYLIST name
-  'pattern_play_album' : r'\$PLAY_ALBUM\s+([^\n]+)',                                       #   $PLAY_ALBUM name
-  'pattern_play_song' : r'\$PLAY_SONG\s+([^\n]+)',                                         #   $PLAY_SONG name
+  'pattern_add_song_to_queue' : r'\$ADD_SONG_TO_QUEUE\s+"(\S+)"',                          #   $ADD_SONG_TO_QUEUE name
+  'pattern_add_artist_to_queue' : r'\$ADD_ARTIST_TO_QUEUE\s+"(\S+)"',                      #   $ADD_ARTIST_TO_QUEUE name
+  'pattern_add_album_to_queue' : r'\$ADD_ALBUM_TO_QUEUE\s+"(\S+)"',                        #   $ADD_ALBUM_TO_QUEUE name
+  'pattern_add_playlist_to_queue' : r'\$ADD_PLAYLIST_TO_QUEUE\s+"(\S+)"',                  #   $ADD_PLAYLIST_TO_QUEUE name
+  'pattern_play_artist' : r'\$PLAY_ARTIST\s+"(\S+)"',                                      #   $PLAY_ARTIST name
+  'pattern_play_playlist' : r'\$PLAY_PLAYLIST\s+"(\S+)"',                                  #   $PLAY_PLAYLIST name
+  'pattern_play_album' : r'\$PLAY_ALBUM\s+"(\S+)"',                                        #   $PLAY_ALBUM name
+  'pattern_play_song' : r'\$PLAY_SONG\s+"(\S+)"',                                          #   $PLAY_SONG name
   'pattern_volume' : r'\$SET_MASTER_VOLUME\s+(\d+)',                                       #   $SET_MASTER_VOLUME percentage
   'pattern_timer' : r'\$SET_TIMER\s+(\d+)\s+(\d+)',                                        #   $SET_TIMER id seconds
   'pattern_stop_timer' : r'\$STOP_TIMER\s+(\d+)',                                          #   $STOP_TIMER id
   'pattern_remaining' : r'\$GET_TIMER_REMAINING\s+(\d+)',                                  #   $GET_TIMER_REMAINING id
   'pattern_speed' : r'\$SET_SPEED\s+(\d+(\.\d+)?)',                                        #   $SET_SPEED speed
-  'pattern_url' : r'\$OPEN_URL\s+(\S+)',                                                   #   $OPEN_URL url
+  'pattern_url' : r'\$OPEN_URL\s+"(\S+)"',                                                 #   $OPEN_URL "url"
   'pattern_python' : r'```python(.*?)```',                                                 #   ```python    code    ```
   'pattern_bash' : r'```bash(.*?)```',                                                     #   ```bash      code    ```
   'pattern_event' : r'\$NEW_EVENT\s+(\S+)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{1,2})',  #   $NEW_EVENT titolo dd/mm/yyyy hh:mm

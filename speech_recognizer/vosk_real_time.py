@@ -1,6 +1,6 @@
 import json
 import pyaudio
-import redirect_output
+from sound import Sound
 
 from vosk import Model, KaldiRecognizer, SetLogLevel
 import os
@@ -62,8 +62,11 @@ def recognize_word(activation_word):
         if prompt:
           # Se viene riconosciuta la parola di attivazione, restituisce la frase
           if activation_word in prompt:
-            return prompt.strip()
+            s = Sound("sounds/active.mp3")
+            s.async_play()
+            return prompt[prompt.find(activation_word)+len(activation_word):].strip()
+        
 
   finally:
-    audio_stream.close()        # Chiude lo stream audio
-    pa.terminate()              # Termina PyAudio
+    audio_stream.close()  # Chiude lo stream audio
+    pa.terminate()        # Termina PyAudio
