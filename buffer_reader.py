@@ -11,8 +11,8 @@ class BufferReader:
     self.chat = chat
 
   def read_from_stream(self, buffer_words=45, first_buffer=10):
-    # Esegue il thread per riprodurre i file audio
-    threading.Thread(target=self.play_queue, args=()).start()
+    # Avvia il thread per riprodurre la coda audio
+    threading.Thread(target=self.play_queue).start()
     
     total_string = ""
     audio_index = 0
@@ -20,70 +20,64 @@ class BufferReader:
     for event in self.generator:
       total_string += str(event)
       total_string_no_tokens = filter.remove_tokens(total_string)
+      total_words = total_string_no_tokens.split()
       
-      total_words = len(total_string_no_tokens.split())
-      
-      # Determina se è il primo buffer o uno successivo
-      if (audio_index == 0 and total_words > first_buffer) or (audio_index > 0 and total_words >= (buffer_words * (audio_index + 1))):
-        if audio_index == 0:  # Primo buffer
-          partial_buffer = " ".join(total_string_no_tokens.split()[:first_buffer])
-          print(f"Primo buffer: {len(partial_buffer.split())} parole")
-        else:  # Buffer successivi
-          start_word = first_buffer + buffer_words * (audio_index - 1)
-          end_word = start_word + buffer_words
-          partial_buffer = " ".join(total_string_no_tokens.split()[start_word:end_word])
-          print(f"Buffer numero {audio_index + 1}, {len(partial_buffer.split())} parole")
+      # Determina se è il momento di creare un buffer audio
+      if (audio_index == 0 and len(total_words) >= first_buffer) or \
+        (audio_index > 0 and len(total_words) - first_buffer >= buffer_words * audio_index):
         
-        # Stampa il contenuto del buffer
+        # Definisce l'intervallo di parole da includere nel buffer corrente
+        start_word = 0 if audio_index == 0 else first_buffer + buffer_words * (audio_index - 1)
+        end_word = start_word + (first_buffer if audio_index == 0 else buffer_words)
+        partial_buffer = " ".join(total_words[start_word:end_word])
+        
+        print(f"Buffer {audio_index + 1}: {len(partial_buffer.split())} parole")
         print(f"Contenuto: {partial_buffer}\n")
         
         # Crea un thread per generare l'audio
-        threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index, f"sounds/output{audio_index}.mp3")).start()
+        threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index)).start()
         
         audio_index += 1
     
-    # Verifica se ci sono parole rimaste da elaborare
-    total_string_no_tokens = filter.remove_tokens(total_string)
-    remaining_words = total_string_no_tokens.split()[first_buffer + buffer_words * audio_index:]
-    
-    print("remaining words (idonno what im doin):", total_string_no_tokens.split()[first_buffer + buffer_words * audio_index:])
+    # Controlla se ci sono parole rimanenti
+    remaining_words = total_string_no_tokens.split()[first_buffer + buffer_words * (audio_index - 1):]
     if remaining_words:
       partial_buffer = " ".join(remaining_words)
-      threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index, f"sounds/output{audio_index}.mp3")).start()
-      print(f"Buffer numero {audio_index + 1}, {len(partial_buffer.split())} parole")
+      print(f"Buffer finale: {len(partial_buffer.split())} parole")
       print(f"Contenuto: {partial_buffer}\n")
+      threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index)).start()
 
-    # Ripristina i token e salva l'output completo
+    # Salva l'output completo dopo la rimozione dei token
     filter.replace_tokens(total_string)
-    print("Output completo:", total_string)
     self.chat.add_to_history_as_model(total_string)
 
-
-  def add_buffer_to_queue(self, text, id, filename):
+  def add_buffer_to_queue(self, text, id):
+    filename = f"sounds/output{id}.mp3"
     _text_to_audio(text, filename)
     self.audio_queue.append({'id': id, 'filename': filename})
 
   def play_queue(self):
-    # Aspetta che sia disponibile il primo file audio
-    while len(self.audio_queue) == 0: pass
+    while not self.audio_queue: pass
     
     audio_number = 0
-    # Mentre ci sono degli audio da riprodurre
-    # Li riproduce i ordine
-    while len(self.audio_queue):
-      for i, audio in enumerate(self.audio_queue):
-        # Cerca l'audio corrispondente
+    
+    while True:
+      # Riproduce gli audio nell'ordine corretto
+      for audio in self.audio_queue:
         if audio['id'] == audio_number:
           filename = audio['filename']
-          
-          print(f"playing {filename}")
+          print(f"Playing {filename}")
+          # Riproduce l'audio
           _play_voice(filename)
-          # Rimuove dalla lista dei file quello appena riprodotto
-          self.audio_queue.pop(i)
-          # Elimina il file
+          # Rimuove l'audio dalla coda
+          self.audio_queue.remove(audio)
+          # Elimina il file audio
           os.remove(filename)
           audio_number += 1
-
+          break  # Esce dal ciclo per riprodurre l'audio successivo
+      
+      if not self.audio_queue:  # Esce se la coda è vuota
+        break
 
 from ChatState import ChatState
 

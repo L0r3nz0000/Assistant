@@ -62,7 +62,7 @@ def recognize_word(activation_word):
         if prompt:
           # Se viene riconosciuta la parola di attivazione, restituisce la frase
           if activation_word in prompt:
-            return prompt.strip()
+            return prompt[prompt.find(activation_word)+len(activation_word):].strip()
 
   finally:
     audio_stream.close()        # Chiude lo stream audio
