@@ -1,5 +1,3 @@
-from stt import listen_prompt
-from tts import speak
 import subprocess
 
 def fetch_updates(update_available):

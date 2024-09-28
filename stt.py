@@ -9,6 +9,15 @@ import threading
 import requests
 import json
 
+#* vosk-api
+import wave
+import sys
+
+from vosk import Model, KaldiRecognizer, SetLogLevel
+#***
+
+MINIMUM_CONFIDENCE_VOSK = 0.6
+
 def save_audio_to_mp3(audio: sr.AudioData, output_path: str):
   # Ottieni i dati audio grezzi dall'oggetto AudioData
   raw_data = audio.get_raw_data()
@@ -23,6 +32,17 @@ def save_audio_to_mp3(audio: sr.AudioData, output_path: str):
 
   # Salva l'audio come file MP3
   audio_segment.export(output_path, format="mp3")
+
+def save_audio_to_wav(audio_data, filename):
+  # Converte i dati in formato PCM
+  raw_data = audio_data.get_raw_data(convert_rate=44100, convert_width=2)
+
+  # Scrivi i dati in un file WAV
+  with wave.open(filename, 'wb') as wf:
+    wf.setnchannels(1)      # Mono
+    wf.setsampwidth(2)      # 16-bit PCM
+    wf.setframerate(44100)  # Frequenza di campionamento 44.1 kHz
+    wf.writeframes(raw_data)
     
 def upload_audio(audio: sr.AudioData) -> str:
   """
@@ -70,7 +90,40 @@ def transcribe_incredibly_fast_whisper(audio: sr.AudioData):
   else:
     return 
 
-def listen_prompt(timeout=8, stt_backend='google', remove_noise=True):
+def transcribe_vosk(audio: sr.AudioData):
+  save_audio_to_wav(audio, 'sounds/input.wav')
+  
+  SetLogLevel(0)  # -1 to disable debug messages
+
+  wf = wave.open('sounds/input.wav', "rb")
+  if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
+    print("Audio file must be WAV format mono PCM.")
+    sys.exit(1)
+
+  model = Model(lang="it")
+
+  rec = KaldiRecognizer(model, wf.getframerate())
+  rec.SetWords(True)
+  rec.SetPartialWords(True)
+  
+  text = ""
+
+  while True:
+    data = wf.readframes(4000)
+    if len(data) == 0:
+      break
+    
+    rec.AcceptWaveform(data)
+
+  results = json.loads(rec.FinalResult())
+  
+  for r in results['result']:
+    if r['conf'] >= MINIMUM_CONFIDENCE_VOSK:
+      text += r['word'] + ' '
+  
+  return text.strip()
+
+def listen_prompt(timeout=8, stt_backend='vosk', remove_noise=True):
   # Ottiene la lista delle app che stanno riproducendo audio
   active_sinks = volume_controller.get_playing_audio_apps()
 
@@ -121,6 +174,13 @@ def listen_prompt(timeout=8, stt_backend='google', remove_noise=True):
           
           text = r.recognize_google(audio, language="it-IT")
           print(f"[{time() - start:.2f}s] Messaggio elaborato con google")
+        
+        elif stt_backend.lower() == 'vosk':
+          print("Vosk sta elaborando il messaggio...")
+          start = time()
+          
+          text = transcribe_vosk(audio)
+          print(f"[{time() - start:.2f}s] Messaggio elaborato con vosk")
         
       except Exception as e:
         print("Exception:", e)

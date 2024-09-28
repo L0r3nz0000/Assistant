@@ -52,8 +52,8 @@ class ChatState:
       
       self._load_history_from_json()
 
-  def _save_json_history(self, file_path):
-    with open(file_path, 'w') as file:
+  def _save_json_history(self):
+    with open(self.HISTORY_FILE, 'w') as file:
       json.dump(self.history_json, file, indent=2)
 
   def add_to_history_as_user(self, message):
@@ -63,13 +63,15 @@ class ChatState:
     now = datetime.now()
     
     timestamp = f'Timestamp: {now.strftime("%d/%m/%Y")} {now.strftime("%H:%M")}'
-    self.history.append(self.__START_TURN_USER__ + timestamp + '\n{prompt}' + self.__END_TURN__)
+    self.history.append(self.__START_TURN_USER__ + timestamp + '\n' + message + self.__END_TURN__)
 
     self.history_json.append({
       "role": "user",
       "message": message,
       "timestamp": timestamp
     })
+    
+    self._save_json_history()
 
   def add_to_history_as_model(self, message):
     """
@@ -81,6 +83,8 @@ class ChatState:
       "role": "model",
       "message": message
     })
+    
+    self._save_json_history()
 
   def get_history(self):
     """
@@ -99,34 +103,30 @@ class ChatState:
 
   def send_message(self, message):
     self.add_to_history_as_user(message)
-    prompt_template = self.get_full_prompt()
+    prompt = self.get_full_prompt()
 
     input = {
-      "prompt_template":  prompt_template,
-      "prompt":           message,
+      #"prompt_template":  prompt,
+      "prompt":           prompt,
+      "system_prompt":    self.system_prompt,
       "max_tokens":       self.settings['max_tokens'],
       "min_tokens":       self.settings['min_tokens'],
       "temperature":      self.settings['temperature'],
       "length_penalty":   self.settings['length_penalty']
     }
     
-    self.history[-1] = self.history[-1].replace('{prompt}', message)
-    
-    response = ""
-
     try:
-      # TODO: inviare batch di testo mentre viene generato
-      for event in replicate.stream(self.MODEL_NAME, input=input):
-        response += str(event)
+      # ritorna il generatore per ottenere la risposta
+      return replicate.stream(self.MODEL_NAME, input=input)
 
     except replicate.exceptions.ReplicateError as e:
       print(e)
       exit(1)
     
-    self.add_to_history_as_model(response)
+    # self.add_to_history_as_model(response)
 
-    # Salva la risposta senza sostituire i token
-    self._save_json_history(self.HISTORY_FILE)
+    # # Salva la risposta senza sostituire i token
+    # self._save_json_history()
 
-    # Ritorna la risposta dopo aver sostituito i token
-    return replace_tokens(response)
+    # # Ritorna la risposta dopo aver sostituito i token
+    # return replace_tokens(response)

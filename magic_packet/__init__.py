@@ -1,0 +1,1 @@
+from .magic_packet import send_wake_on_lan

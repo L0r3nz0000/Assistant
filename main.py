@@ -1,23 +1,21 @@
-from wake_word import blocking_wake_word
 from updates import fetch_updates
 from ChatState import ChatState
-from stt import listen_prompt
-from devices.devices import power_off, power_on
-import multiprocessing
-from clap_detector.clap import MyTapTester
+from speech_recognizer.vosk_real_time import recognize_word
+from thread_exception import StoppableThread
 from time import time
 from tts import speak
+from buffer_reader import BufferReader
 import subprocess
 import threading
-import signal
 import json
 import os
 
+# chat inizializzata a None per non perdere il riferimanto (per il garbage collector)
 chat = None
+activation_word = "alexa"
 
-def new_interaction(conversation_open, response_completed, update_available):
+def new_interaction(user_prompt, conversation_open, update_available):
   chat = ChatState(system=system_prompt)
-  user_prompt = ""
   
   with open('settings.json', 'r') as file:
     settings = json.load(file)
@@ -28,42 +26,39 @@ def new_interaction(conversation_open, response_completed, update_available):
     speak(question)
     
     chat.add_to_history_as_model(question)
-    
-  user_prompt = listen_prompt()
 
-  process = multiprocessing.Process(target=interaction, args=(chat, user_prompt, conversation_open, response_completed))
-  process.start()
-  return process
+  thread = StoppableThread(target=interaction, args=(chat, user_prompt, conversation_open))
+  thread.start()
+  return thread
 
-def interaction(chat, user_prompt, conversation_open, response_completed):
-  response_completed.clear()
-
+def interaction(chat, user_prompt, conversation_open):
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
-    start = time()
-    output = chat.send_message(user_prompt).strip()
-    print(f"[{time() - start:.2f}s] Ottenuta risposta testuale da llama.")
-    print('\033[94m' + 'Model:' + '\033[39m', output)
+    
+    generator = chat.send_message(user_prompt)
+    # Genera e riproduce dei "pezzi" di audio a partire dallo stream replicate
+    br = BufferReader(chat, generator)
+    br.read_from_stream()
+    
+    # print('\033[94m' + 'Model:' + '\033[39m', output)
 
-    if output:
-      if '$END' in output:
-        # La conversazione è chiusa
-        conversation_open.clear()
-        output = output.replace('$END', '')
-      else:
-        # La conversazione continua
-        conversation_open.set()
+    # if output:
+    #   if '$END' in output:
+    #     # La conversazione è chiusa
+    #     conversation_open.clear()
+    #     output = output.replace('$END', '')
+    #   else:
+    #     # La conversazione continua
+    #     conversation_open.set()
       
-      speak(output)
+    #   speak(output)
   else:
     print(f"input non valido: '{user_prompt}'")
     conversation_open.clear()
-  response_completed.set()
 
 if __name__ == "__main__":
-  conversation_open = multiprocessing.Event()  # Default False
-  response_completed = multiprocessing.Event()
-  update_available = multiprocessing.Event()
+  conversation_open = threading.Event()  # Default False
+  update_available = threading.Event()
   
   if not os.path.exists('settings.json'):
     default_settings = {
@@ -87,26 +82,19 @@ if __name__ == "__main__":
   
   # Esegue il server flask per spotify connect
   subprocess.Popen([".env/bin/python3", "-m", "flask", "run"], cwd='spotify-free-api')
-  
-  # tt = MyTapTester()
-  # tt.double_clap_callback(power_on, (0,))
-  
-  # clap_thread = threading.Thread(target=tt.listen)
-  # clap_thread.start()
 
   # Carica il prompt system dal file
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
     
   # Loop eventi
-  blocking_wake_word(conversation_open, response_completed, update_available)
-  p = new_interaction(conversation_open, response_completed, update_available)
+  user_prompt = recognize_word(activation_word)
+  t = new_interaction(user_prompt, conversation_open, update_available)
 
   while True:
-    blocking_wake_word(conversation_open, response_completed, update_available)
-    if p.is_alive():
-      os.kill(p.pid, signal.SIGTERM)
-      print("Processo interrotto")
+    user_prompt = recognize_word(activation_word)
+    t.terminate()
+    print("Thread interrotto")
 
-    print("Sto creando un nuovo processo...")
-    p = new_interaction(conversation_open, response_completed, update_available)
+    print("Sto creando un nuovo thread...")
+    t = new_interaction(user_prompt, conversation_open, update_available)

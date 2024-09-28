@@ -1,9 +1,16 @@
-from magic_packet import send_wake_on_lan
 import paramiko
 import json
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from magic_packet import send_wake_on_lan
+
+devices_path = os.path.join(os.path.dirname(__file__), 'devices.json')
 
 def add_button(name: str, ip_address: str, _id: int):
-  with open('devices.json', 'r') as file:
+  with open(devices_path, 'r') as file:
     devices = json.load(file)
 
   devices.append({
@@ -14,11 +21,26 @@ def add_button(name: str, ip_address: str, _id: int):
     'ip_address': ip_address
   })
 
-  with open('devices.json', 'w') as file:
+  with open(devices_path, 'w') as file:
+    json.dump(devices, file)
+
+def add_chromecast(friendly_name: str, uuid: str, _id: int, state: str = "off"):
+  with open(devices_path, 'r') as file:
+    devices = json.load(file)
+
+  devices.append({
+    'id': _id,
+    'state': state,
+    'uuid': uuid,
+    'friendly_name': friendly_name,
+    'type': 'chromecast'
+  })
+
+  with open(devices_path, 'w') as file:
     json.dump(devices, file)
     
 def add_computer(name: str, ip_address: str, mac_address: str, username: str, password: str, _id: int):
-  with open('devices.json', 'r') as file:
+  with open(devices_path, 'r') as file:
     devices = json.load(file)
 
   devices.append({
@@ -32,7 +54,7 @@ def add_computer(name: str, ip_address: str, mac_address: str, username: str, pa
     'password': password
   })
 
-  with open('devices.json', 'w') as file:
+  with open(devices_path, 'w') as file:
     json.dump(devices, file)
 
 def power_on(_id: int):
@@ -45,7 +67,7 @@ def power_on(_id: int):
     L'id del dispositivo da accendere.
   """
   from filter import async_post
-  with open('devices.json', 'r') as file:
+  with open(devices_path, 'r') as file:
     devices = json.load(file)
 
   for device in devices:
@@ -59,12 +81,12 @@ def power_on(_id: int):
           
         case 'computer':
           device['state'] = 'on'
-          send_wake_on_lan(device['mac_address'])
+          magic_packet.send_wake_on_lan(device['mac_address'])
           
         case _:
           pass
 
-  with open('devices.json', 'w') as file:
+  with open(devices_path, 'w') as file:
     json.dump(devices, file)
 
 def ssh_shutdown(hostname, username, password):
@@ -87,7 +109,7 @@ def power_off(_id: int):
     L'id del dispositivo da spegnere.
   """
   from filter import async_post
-  with open('devices.json', 'r') as file:
+  with open(devices_path, 'r') as file:
     devices = json.load(file)
   
   for device in devices:
@@ -106,6 +128,20 @@ def power_off(_id: int):
         case _:
           pass
 
+def get_all_devices():
+  with open(devices_path, 'r') as file:
+    devices = json.load(file)
+
+  return devices
+
+def get_device(_id: int):
+  devices = get_all_devices()
+
+  for device in devices:
+    if device['id'] == _id:
+      return device
+  return None
+
 def interactive_add_device():
   print(
 """Benvenuto nello script per collegare un dispositivo all'assistente vocale
@@ -122,7 +158,7 @@ Scegli un tipo di dispositivo da aggiungere tra quelli compatibili:
   except ValueError:
     print("Valore non valido")
   
-  with open('devices.json', 'r') as file:
+  with open(devices_path, 'r') as file:
     devices = json.load(file)
   
   if devices:
