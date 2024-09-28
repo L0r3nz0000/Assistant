@@ -49,18 +49,18 @@ def _play_voice(filename):
       settings = json.load(file)
 
     # Ottiene la lista delle app che stanno riproducendo audio
-    #active_sinks = volume_controller.get_playing_audio_apps()
+    active_sinks = volume_controller.get_playing_audio_apps()
 
     # Abbassa il volume di tutte le app attive
-    # for sink_id in active_sinks:
-    #   volume_controller.set_volume(sink_id, settings['volume_decrease'])
+    for sink_id in active_sinks:
+      volume_controller.set_volume(sink_id, settings['volume_decrease'])
 
     s = Sound(filename, speed=settings['output_speed'])
     s.play()
 
     # Riporta il volume delle app attive al valore iniziale
-    # for sink_id in active_sinks:
-    #   volume_controller.set_volume(sink_id, 100)
+    for sink_id in active_sinks:
+      volume_controller.set_volume(sink_id, 100)
 
 def speak(text, voice="fiamma"):
   text = text.strip()  # Elimina gli spazi inutili
