@@ -65,6 +65,8 @@ def _play_voice(filename):
 def speak(text, voice="fiamma"):
   text = text.strip()  # Elimina gli spazi inutili
   if text:
-    filename = _text_to_audio(text, voice)
+    if os.path.exists("sounds/output.mp3"):
+      os.remove("sounds/output.mp3")
+    filename = _text_to_audio(text, "sounds/output.mp3", voice)
 
     _play_voice(filename)
