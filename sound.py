@@ -1,7 +1,11 @@
 from pydub import AudioSegment
 from time import sleep
-import multiprocessing
-import subprocess
+from thread_exception import StoppableThread
+#! trovare una libreria per l'audio
+
+
+import pygame
+
 import os
 
 class Sound:
@@ -9,7 +13,7 @@ class Sound:
     if filename:
       if os.path.exists(filename):
         self.filename = filename
-        self.delay_process = None
+        self.delay_thread = None
         self.speed = speed
       else:
         print(f"File {filename} non trovato")
@@ -29,26 +33,29 @@ class Sound:
     self.play()
 
   def delayed_play(self, delay):
-    self.delay_process = multiprocessing.Process(target=self._delayed_play, args=(delay,))
-    self.delay_process.start()
-    return self.delay_process.pid
+    self.delay_thread = StoppableThread(target=self._delayed_play, args=(delay,))
+    self.delay_thread.start()
+    
+  def _play(self):
+    if self.filename:
+      # Imposta la frequenza
+      pygame.mixer.init(frequency=int(44100 * self.speed))
 
+      # Carica l'audio
+      pygame.mixer.music.load(self.filename)
+      pygame.mixer.music.play()
+    else:
+      print("File non trovato")
+      
   def async_play(self):
-    self.delayed_play(0)
+    self._play()
   
   def play(self):
-    if self.filename:
-      subprocess.run(["mpv", self.filename, f"--speed={self.speed}"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT)
-  
+    self._play()
+    try:
+      sleep(self.get_duration())
+    except KeyboardInterrupt:
+      self.stop()
+      
   def stop(self):
-    ok = False
-
-    if self.delay_process != None:
-      if self.delay_process.is_alive():
-        self.delay_process.terminate()
-        ok = True
-    
-    print("Processo già terminato" if not ok else "")
-    return ok
+    pygame.mixer.quit()
