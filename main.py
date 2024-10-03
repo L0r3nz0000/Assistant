@@ -1,13 +1,13 @@
 from updates import fetch_updates
-from ChatState import ChatState
 from speech_recognizer.vosk_real_time import recognize_word
 from buffer_reader import BufferReader
+from coral import CoralChat
 import subprocess
 import threading
 import json
 import os
 
-activation_word = "alexa"
+activation_word = "coral"
 
 def interaction(chat, user_prompt, conversation_open):
   if user_prompt:
@@ -54,7 +54,7 @@ if __name__ == "__main__":
   with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
   
-  chat = ChatState(system=system_prompt)
+  chat = CoralChat(system=system_prompt)
   
   # Loop eventi
   while True:
