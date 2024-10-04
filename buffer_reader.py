@@ -82,7 +82,13 @@ class BufferReader:
       
       if not self.audio_queue:  # Esce se la coda è vuota
         break
-
+  
+  def stop(self):
+    self.stream.close()
+  
+  
+  
+  
 from coral import CoralChat
 
 if __name__ == "__main__":
