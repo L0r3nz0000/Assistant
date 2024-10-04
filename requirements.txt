@@ -12,3 +12,4 @@ scipy
 paramiko
 vosk
 pygame
+cohere

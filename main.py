@@ -2,6 +2,7 @@ from updates import fetch_updates
 from speech_recognizer.vosk_real_time import recognize_word
 from buffer_reader import BufferReader
 from coral import CoralChat
+from thread_exception import StoppableThread
 import subprocess
 import threading
 import json
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     system_prompt = file.read()
   
   chat = CoralChat(system=system_prompt)
+  
+  t = StoppableThread(target=)
   
   # Loop eventi
   while True:
