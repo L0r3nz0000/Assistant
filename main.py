@@ -5,12 +5,13 @@ from coral import CoralChat
 from thread_exception import StoppableThread
 import subprocess
 import threading
+from wake_word import wake_word_stopper
 import json
 import os
 
 activation_word = "coral"
 
-def interaction(chat, user_prompt, conversation_open):
+def interaction(chat, user_prompt, stop_flag):
   if user_prompt:
     print('\033[94m' + 'User:' + '\033[39m', user_prompt)
     
@@ -20,9 +21,15 @@ def interaction(chat, user_prompt, conversation_open):
     br = BufferReader(chat, generator)
     # Genera e riproduce dei buffer audio a partire dallo stream replicate
     br.read_from_stream()
+    
+    while not br.completed:
+      if stop_flag.is_set():
+        br.stop()
+        stop_flag.clear()
+        break
+      
   else:
     print(f"input non valido: '{user_prompt}'")
-    conversation_open.clear()
 
 if __name__ == "__main__":
   conversation_open = threading.Event()  # Default False
@@ -57,9 +64,12 @@ if __name__ == "__main__":
   
   chat = CoralChat(system=system_prompt)
   
-  t = StoppableThread(target=)
+  stop_flag = threading.Event()
+  
+  t = StoppableThread(target=wake_word_stopper , args=(stop_flag,))
+  t.start()
   
   # Loop eventi
   while True:
     user_prompt = recognize_word(activation_word)
-    interaction(chat, user_prompt, conversation_open)
+    interaction(chat, user_prompt, conversation_open, stop_flag)

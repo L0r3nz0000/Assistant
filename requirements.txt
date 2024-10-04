@@ -13,3 +13,4 @@ paramiko
 vosk
 pygame
 cohere
+pygame
