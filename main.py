@@ -25,7 +25,6 @@ def interaction(chat, user_prompt, stop_flag):
     while not br.completed:
       if stop_flag.is_set():
         br.stop()
-        stop_flag.clear()
         break
       
   else:
@@ -66,10 +65,12 @@ if __name__ == "__main__":
   
   stop_flag = threading.Event()
   
-  t = StoppableThread(target=wake_word_stopper , args=(stop_flag,))
-  t.start()
-  
   # Loop eventi
   while True:
-    user_prompt = recognize_word(activation_word)
-    interaction(chat, user_prompt, conversation_open, stop_flag)
+    user_prompt = recognize_word(activation_word, stop_flag)
+    
+    t = StoppableThread(target=wake_word_stopper , args=(stop_flag,))
+    t.start()
+    
+    interaction(chat, user_prompt, stop_flag)
+    t.terminate()
