@@ -18,7 +18,8 @@ SAMPLE_RATE = 16000
 FRAME_LENGTH = 4096
 MINIMUM_CONFIDENCE_VOSK = 0.6
 
-def recognize_word(activation_word):
+# La stop flag viene attivata quando l'utente interrompe l'assistente, quindi ascolta senza aspettare la parola di attivazione
+def recognize_word(activation_word, stop_flag):
   # Inizializza pyaudio
   pa = pyaudio.PyAudio()
 
@@ -32,7 +33,10 @@ def recognize_word(activation_word):
   
   SetLogLevel(-1)
   
-  print(f"Aspetto la parola {activation_word}...")
+  if stop_flag.is_set():
+    print(f"Ascolto...")
+  else:
+    print(f"Aspetto la parola {activation_word}...")
   
   # Inizializza il recognizer con il modello
   rec = KaldiRecognizer(model, SAMPLE_RATE)
@@ -61,10 +65,12 @@ def recognize_word(activation_word):
         # Verifica che sia stata riconosciuta almeno una parola
         if prompt:
           # Se viene riconosciuta la parola di attivazione, restituisce la frase
-          if activation_word in prompt:
-            s = Sound("sounds/active.mp3")
-            s.async_play()
-            return prompt[prompt.find(activation_word)+len(activation_word):].strip()
+          if activation_word in prompt or stop_flag.is_set():
+            if stop_flag.is_set():
+              stop_flag.clear()
+              return prompt
+            else:
+              return prompt[prompt.find(activation_word)+len(activation_word):]
         
 
   finally:

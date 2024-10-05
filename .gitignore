@@ -14,3 +14,4 @@ alarm/alarms.json
 event/events.json
 speech_recognizer/vosk-model-it-0.22/
 sounds/output*.mp3
+wake_word_models/*.ppn
