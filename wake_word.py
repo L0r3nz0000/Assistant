@@ -7,8 +7,8 @@ import struct
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
-linux_keyword_path = "wake_word_models/jarvis_it_linux_v3_0_0.ppn"
-raspberry_keyword_path = "wake_word_models/Jarvis_it_raspberry-pi_v3_0_0.ppn"
+linux_keyword_path = "wake_word_models/Coral_it_linux_v3_0_0.ppn"
+raspberry_keyword_path = "wake_word_models/Coral_it_raspberry-pi_v3_0_0.ppn"
 
 # Carica il modello adatto per la piattaforma
 keyword_path = linux_keyword_path if not is_raspberry_pi() else raspberry_keyword_path
