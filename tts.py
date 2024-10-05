@@ -43,7 +43,7 @@ def _text_to_audio(text, filename=None, voice="fiamma"):
   print(f"[{time() - start:.2f}s] Ottenuta la risposta vocale da azure.")
   return filename
 
-def _play_voice(filename):
+def _play_voice(filename, play_async=False):
   if filename:
     with open("settings.json", "r") as file:
       settings = json.load(file)
@@ -56,11 +56,13 @@ def _play_voice(filename):
     #   volume_controller.set_volume(sink_id, settings['volume_decrease'])
 
     s = Sound(filename, speed=settings['output_speed'])
-    s.play()
+    
+    s.async_play() if play_async else s.play()
 
     # Riporta il volume delle app attive al valore iniziale
     # for sink_id in active_sinks:
     #   volume_controller.set_volume(sink_id, 100)
+    return s if play_async else None
 
 def speak(text, voice="fiamma"):
   text = text.strip()  # Elimina gli spazi inutili

@@ -1,7 +1,8 @@
-import threading
+from thread_exception import StoppableThread
 from tts import _text_to_audio, _play_voice
 import filter
 from markdown import remove_markdown
+from time import sleep
 import os
 
 class BufferReader:
@@ -9,15 +10,22 @@ class BufferReader:
     self.audio_queue = []
     self.stream = stream
     self.chat = chat
-
+    self.s = None
+    self.stopped = False
+    self.threads = []
+    self.completed = False
+    
   def read_from_stream(self, buffer_words=45, first_buffer=10):
     # Avvia il thread per riprodurre la coda audio
-    threading.Thread(target=self.play_queue).start()
+    self.threads.append(StoppableThread(target=self.play_queue))
+    self.threads[-1].start()
     
     total_string = ""
     audio_index = 0
     
     for event in self.stream:
+      if self.stopped:
+        return
       if event.event_type == "text-generation":
         total_string += event.text
         
@@ -38,7 +46,8 @@ class BufferReader:
           print(f"Contenuto: {partial_buffer}\n")
           
           # Crea un thread per generare l'audio
-          threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index)).start()
+          self.threads.append(StoppableThread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index)))
+          self.threads[-1].start()
           
           audio_index += 1
     
@@ -48,7 +57,8 @@ class BufferReader:
       partial_buffer = " ".join(remaining_words)
       print(f"Buffer finale: {len(partial_buffer.split())} parole")
       print(f"Contenuto: {partial_buffer}\n")
-      threading.Thread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index)).start()
+      self.threads.append(StoppableThread(target=self.add_buffer_to_queue, args=(partial_buffer, audio_index)))
+      self.threads[-1].start()
 
     # Salva l'output completo dopo la rimozione dei token
     total_string = remove_markdown(total_string)
@@ -72,7 +82,8 @@ class BufferReader:
           filename = audio['filename']
           print(f"Playing {filename}")
           # Riproduce l'audio
-          _play_voice(filename)
+          self.s = _play_voice(filename, play_async=True)
+          sleep(self.s.get_duration())
           # Rimuove l'audio dalla coda
           self.audio_queue.remove(audio)
           # Elimina il file audio
@@ -81,8 +92,22 @@ class BufferReader:
           break  # Esce dal ciclo per riprodurre l'audio successivo
       
       if not self.audio_queue:  # Esce se la coda è vuota
+        self.completed = True
         break
-
+  
+  def stop(self):
+    if self.stream:
+      self.stream.close()
+    if self.s:
+      self.s.stop()
+      
+    self.stopped = True
+    
+    for t in self.threads:
+      t.terminate()
+  
+  
+  
 from coral import CoralChat
 
 if __name__ == "__main__":
@@ -93,8 +118,8 @@ if __name__ == "__main__":
   with open("system_prompt.txt", "r") as file:
     system = file.read()
     
-  chat = CoralChat()#system=system)
+  chat = CoralChat(system=system)
   
-  generator = chat.send_message("come ti chiami?")
+  generator = chat.send_message("cosa sai fare?")
   br = BufferReader(chat, generator)
   br.read_from_stream()

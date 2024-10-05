@@ -1,5 +1,6 @@
 from redirect_output import suppress_stderr, restore_stderr
 from raspberry_pi import is_raspberry_pi
+import threading
 import pvporcupine
 import pyaudio
 import struct
@@ -53,11 +54,9 @@ def blocking_wake_word(stop):
     handle.delete()             # Elimina l'handle di Porcupine
     restore_stderr(old_stderr)  # Ripristina lo stderr
 
-import threading
-
-if __name__ == "__main__":
+def wake_word_stopper(stop_flag):
   stop = threading.Event()
   
   while True:
-    if blocking_wake_word(stop):
-      print("Hai detto Coral")
+    blocking_wake_word(stop)
+    stop_flag.set()
