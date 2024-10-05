@@ -1,14 +1,13 @@
 from redirect_output import suppress_stderr, restore_stderr
 from raspberry_pi import is_raspberry_pi
-from updates import fetch_updates
 import pvporcupine
 import pyaudio
 import struct
 
 access_key = "KLlwjiQgPwLdfVFeikjfBtM/+8GnlLdCvlQaLAtUwUVDDr4jPNEgdw=="
 
-linux_keyword_path = "wake_word_models/jarvis_it_linux_v3_0_0.ppn"
-raspberry_keyword_path = "wake_word_models/Jarvis_it_raspberry-pi_v3_0_0.ppn"
+linux_keyword_path = "wake_word_models/Coral_it_linux_v3_0_0.ppn"
+raspberry_keyword_path = "wake_word_models/Coral_it_raspberry-pi_v3_0_0.ppn"
 
 # Carica il modello adatto per la piattaforma
 keyword_path = linux_keyword_path if not is_raspberry_pi() else raspberry_keyword_path
@@ -17,7 +16,7 @@ model_path = "wake_word_models/porcupine_params_it.pv"
 def get_next_audio_frame(): pass
 
 # Aspetta la parola di attivazione
-def blocking_wake_word(conversation_open, response_completed, update_available):
+def blocking_wake_word(stop):
   handle = pvporcupine.create(
     access_key=access_key,
     keyword_paths=[keyword_path],
@@ -27,9 +26,6 @@ def blocking_wake_word(conversation_open, response_completed, update_available):
   old_stderr = suppress_stderr()
 
   pa = pyaudio.PyAudio()
-  
-  print("sample rate:", handle.sample_rate)
-  print("frame length:", handle.frame_length)
 
   audio_stream = pa.open(
     rate=handle.sample_rate,
@@ -42,7 +38,7 @@ def blocking_wake_word(conversation_open, response_completed, update_available):
 
   try:
     while True:
-      if response_completed.is_set() and conversation_open.is_set() or update_available.is_set():
+      if stop.is_set():
         return False
       
       pcm = audio_stream.read(handle.frame_length)
@@ -56,3 +52,12 @@ def blocking_wake_word(conversation_open, response_completed, update_available):
     pa.terminate()              # Termina PyAudio
     handle.delete()             # Elimina l'handle di Porcupine
     restore_stderr(old_stderr)  # Ripristina lo stderr
+
+import threading
+
+if __name__ == "__main__":
+  stop = threading.Event()
+  
+  while True:
+    if blocking_wake_word(stop):
+      print("Hai detto Coral")
