@@ -62,7 +62,8 @@ class BufferReader:
 
     # Salva l'output completo dopo la rimozione dei token
     total_string = remove_markdown(total_string)
-    filter.replace_tokens(total_string)
+    filter.execute_tokens(total_string)
+    print("executing: " + total_string)
     self.chat.add_to_history_as_model(total_string)
 
   def add_buffer_to_queue(self, text, id):

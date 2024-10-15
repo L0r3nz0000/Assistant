@@ -418,22 +418,14 @@ functions = {
   '$ADD_ARTIST_TO_QUEUE': add_artist_to_queue
 }
 
-def replace_tokens(text):
+def execute_tokens(text):
   text = execute_and_remove_python_tags(text, remove=True)  # Esegue e rimuove gli script python
   text = execute_and_remove_code_blocks(text, remove=True)  # Esegue e rimuove gli script bash
-  
-  if '$END' in text:
-    text = text.replace('$END', '')
-    end = True
-  else:
-    end = False
 
   for token in functions:
     if token in text:
       text = functions[token](text, token)
   
-  if end:
-    text += '$END'
   return text
 
 def remove_tokens(text):
