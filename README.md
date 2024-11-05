@@ -13,13 +13,13 @@ The idea behind this voice assistant is to implement useful functions, such as s
 
 Start the service with ```sudo systemctl start Assistant```.
 
-You can use the default wake word "jarvis." Wait for the activation sound and then ask your question.
+You can use the default wake word "coral." Wait for the activation sound and then ask your question.
 If you want to change the wake word, you can go to [Picovoice](https://console.picovoice.ai/), create your
 wake word, and download it into the wake_word_models/ directory
 
 # Functions
 
-* Answer to every type of question (using llama3-70b fine-tuned for chat)
+* Answer to every type of question
 * Execute bash and python scripts
 * Tell the current date and time
 * Create a timer
